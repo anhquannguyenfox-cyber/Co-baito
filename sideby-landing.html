@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sideby — Work alongside someone, without a word</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #120E1A;
+    --bg-soft: #17121F;
+    --surface: #1C1626;
+    --surface-hover: #241C31;
+    --line: rgba(245,241,250,0.09);
+    --line-strong: rgba(245,241,250,0.16);
+    --text: #F5F1FA;
+    --muted: #9B93AE;
+    --muted-dim: #6E668A;
+    --violet: #8B6BFF;
+    --violet-soft: rgba(139,107,255,0.14);
+    --mint: #5EEAD4;
+    --mint-soft: rgba(94,234,212,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 18% -10%, rgba(139,107,255,0.16), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 88% 8%, rgba(94,234,212,0.09), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  .wrap{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* Nav */
+  header{
+    padding: 30px 0 0;
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .nav-left{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+  }
+  .nav-link{
+    display:flex;
+    align-items:center;
+    gap: 7px;
+    padding: 9px 15px;
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 14.5px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .nav-link:hover{
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--line);
+  }
+  .nav-link svg{
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+  }
+  .nav-link.locked{
+    color: var(--muted-dim);
+  }
+  .nav-link .pro-tag{
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #0E1613;
+    background: var(--mint);
+    padding: 2px 7px;
+    border-radius: 100px;
+    line-height: 1.5;
+  }
+  @media (max-width: 720px){
+    .nav-link span.label{ display: none; }
+    .nav-link{ padding: 9px 10px; }
+    .nav-link .pro-tag{ display: none; }
+  }
+  .mark{
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(150deg, var(--violet), #5B49C4);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Hero */
+  .hero{
+    padding: 96px 0 20px;
+    text-align: center;
+    opacity: 0;
+    animation: rise 0.7s ease-out forwards;
+  }
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(14px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  .kicker{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+    font-size: 13.5px;
+    margin-bottom: 34px;
+  }
+  .kicker .dot{
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 0 3px var(--mint-soft);
+  }
+
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(38px, 6vw, 62px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 0 0 26px;
+  }
+  h1 em{
+    font-style: italic;
+    font-weight: 500;
+    background: linear-gradient(100deg, var(--violet), var(--mint) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lede{
+    max-width: 540px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  /* Mode section */
+  .modes{
+    padding: 68px 0 110px;
+    opacity: 0;
+    animation: rise 0.7s ease-out 0.15s forwards;
+  }
+
+  .modes-label{
+    text-align: center;
+    color: var(--muted-dim);
+    font-size: 14px;
+    margin-bottom: 26px;
+  }
+
+  .mode-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 720px){
+    .mode-grid{ grid-template-columns: 1fr; }
+  }
+
+  .mode-col{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .submodes{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease;
+  }
+  .mode-col:hover .submodes,
+  .mode-col.open .submodes,
+  .mode-col:focus-within .submodes{
+    max-height: 220px;
+    opacity: 1;
+    margin-top: 14px;
+  }
+
+  .submode-option{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .submode-option:hover,
+  .submode-option:focus-visible{
+    border-color: rgba(139,107,255,0.55);
+    background: var(--surface-hover);
+    outline: none;
+  }
+  .submode-option.active{
+    border-color: var(--violet);
+    background: var(--violet-soft);
+  }
+  .submode-name{
+    font-weight: 600;
+    font-size: 14.5px;
+    flex-shrink: 0;
+  }
+  .submode-time{
+    color: var(--muted);
+    font-size: 13px;
+    text-align: right;
+  }
+
+  /* Ghost Mode terminal panel (Work Alone) */
+  .ghost-panel{
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease;
+  }
+  .mode-col:hover .ghost-panel,
+  .mode-col.open .ghost-panel,
+  .mode-col:focus-within .ghost-panel{
+    max-height: 420px;
+    opacity: 1;
+    margin-top: 14px;
+  }
+
+  .ghost-terminal{
+    font-family: 'Courier New', ui-monospace, monospace;
+    background: #05070A;
+    border: 1px dashed rgba(94,234,212,0.4);
+    border-radius: 12px;
+    padding: 18px 20px;
+    color: #D7F5EE;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+  .ghost-title{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--mint);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .ghost-sub{
+    color: #7FE0CE;
+    opacity: 0.75;
+    margin-bottom: 16px;
+  }
+  .ghost-length-label{ color: var(--mint); margin-bottom: 8px; }
+  .ghost-lengths{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .ghost-pill{
+    font-family: inherit;
+    background: transparent;
+    border: 1px solid rgba(94,234,212,0.35);
+    color: #B9F3E7;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .ghost-pill:hover{ border-color: var(--mint); }
+  .ghost-pill.active{
+    background: var(--mint);
+    color: #04211C;
+    border-color: var(--mint);
+    font-weight: 700;
+  }
+  .ghost-start{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--mint);
+    color: var(--mint);
+    font-family: inherit;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .ghost-start:hover{ background: rgba(94,234,212,0.12); }
+
+  .mode-card{
+    position: relative;
+    text-align: left;
+    display: block;
+    width: 100%;
+    padding: 34px 30px 30px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+  .mode-card:hover{
+    background: var(--surface-hover);
+    transform: translateY(-2px);
+  }
+  .mode-card:focus-visible{
+    outline: 2px solid var(--mint);
+    outline-offset: 3px;
+  }
+
+  .mode-card.together{ border-color: rgba(139,107,255,0.35); }
+  .mode-card.together:hover{ border-color: rgba(139,107,255,0.6); }
+  .mode-card.alone{ border-color: rgba(94,234,212,0.3); }
+  .mode-card.alone:hover{ border-color: rgba(94,234,212,0.55); }
+
+  .icon{
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 22px;
+  }
+  .together .icon{ background: var(--violet-soft); }
+  .alone .icon{ background: var(--mint-soft); }
+  .icon svg{ width: 22px; height: 22px; }
+
+  .mode-card h2{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .mode-card p{
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 22px;
+    max-width: 34ch;
+  }
+
+  .mode-meta{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .mode-tags{
+    display:flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag{
+    font-size: 12.5px;
+    color: var(--muted-dim);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  .go{
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .together .go{ background: var(--violet); }
+  .alone .go{ background: var(--mint); }
+  .mode-card:hover .go{ transform: translateX(3px); }
+  .go svg{ width: 15px; height: 15px; }
+  .together .go svg{ stroke: #fff; }
+  .alone .go svg{ stroke: #0E1613; }
+
+  footer{
+    padding: 0 0 50px;
+    text-align: center;
+    color: var(--muted-dim);
+    font-size: 13.5px;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <div class="nav-left">
+          <div class="mark">S</div>
+          <div class="wordmark">Sideby</div>
+        </div>
+        <div class="nav-links">
+          <a class="nav-link" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="3.5" y="5" width="17" height="15" rx="2.5"/>
+              <path d="M3.5 9.5h17M8 3v3M16 3v3"/>
+            </svg>
+            <span class="label">Calendar</span>
+          </a>
+          <a class="nav-link" href="sideby-tasks.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M5 6.5h14M5 12h14M5 17.5h9"/>
+              <circle cx="19" cy="17.5" r="1.4" fill="currentColor" stroke="none"/>
+            </svg>
+            <span class="label">Task Planning</span>
+          </a>
+          <a class="nav-link" href="community-module.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <circle cx="9" cy="9" r="3"/>
+              <circle cx="16.5" cy="10" r="2.4"/>
+              <path d="M3.5 19c0-2.8 2.4-4.8 5.5-4.8s5.5 2 5.5 4.8"/>
+              <path d="M14.8 14.5c2.4.2 4.2 2 4.2 4.5"/>
+            </svg>
+            <span class="label">Community</span>
+          </a>
+          <a class="nav-link locked" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5.5" y="10.5" width="13" height="9" rx="2"/>
+              <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>
+            </svg>
+            <span class="label">Badges &amp; Certificates</span>
+            <span class="pro-tag">PRO</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="kicker">
+        <span class="dot"></span>
+        Presence, without pressure
+      </div>
+      <h1>Work next to someone,<br><em>without saying a word.</em></h1>
+      <p class="lede">
+        Sideby is body doubling for freelancers — a quiet room where another
+        person is working too. No calls, no check-ins, no performance. Just
+        two timers running at the same time.
+      </p>
+    </div>
+  </section>
+
+  <section class="modes">
+    <div class="wrap">
+      <p class="modes-label">Pick how you want to work today</p>
+      <div class="mode-grid">
+
+        <div class="mode-col" id="togetherCol">
+          <a class="mode-card together" href="#" id="togetherBtn">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#8B6BFF" stroke-width="1.6">
+                <circle cx="8" cy="9" r="3.2"/>
+                <circle cx="16" cy="9" r="3.2"/>
+                <path d="M3 20c0-3 2.5-5 5-5s5 2 5 5"/>
+                <path d="M11 20c0-3 2.5-5 5-5s5 2 5 5"/>
+              </svg>
+            </div>
+            <h2>Work Together</h2>
+            <p>Drop into a shared room with 1 to 3 other freelancers. You'll
+              see their timers and tasks, they'll see yours. When the
+              session ends, you get 10 minutes to review each other's work.</p>
+            <div class="mode-meta">
+              <div class="mode-tags">
+                <span class="tag">Visible peer</span>
+                <span class="tag">10-min peer review</span>
+              </div>
+              <div class="go">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h13M13 6l6 6-6 6"/>
+                </svg>
+              </div>
+            </div>
+          </a>
+          <div class="submodes">
+            <a class="submode-option" data-mode="small" href="sideby-room.html?mode=small">
+              <span class="submode-name">Small Tasks</span>
+              <span class="submode-time">25 min working · 5 min reviewing</span>
+            </a>
+            <a class="submode-option" data-mode="deep" href="sideby-room.html?mode=deep">
+              <span class="submode-name">Deep Work</span>
+              <span class="submode-time">50 min working non-stop · 10 min reviewing</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="mode-col" id="aloneCol">
+          <a class="mode-card alone" href="#" id="aloneBtn">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5EEAD4" stroke-width="1.6">
+                <path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>
+                <circle cx="12" cy="12" r="5.5"/>
+              </svg>
+            </div>
+            <h2>Work Alone</h2>
+            <p>A private focus room, just for you. Ambient sound, a running
+              timer, and no one watching. At the end, present what you made
+              and get a quick evaluation from AI instead of a peer.</p>
+            <div class="mode-meta">
+              <div class="mode-tags">
+                <span class="tag">Fully private</span>
+                <span class="tag">AI evaluation</span>
+              </div>
+              <div class="go">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h13M13 6l6 6-6 6"/>
+                </svg>
+              </div>
+            </div>
+          </a>
+          <div class="ghost-panel">
+            <div class="ghost-terminal">
+              <div class="ghost-title">👻 GHOST MODE</div>
+              <div class="ghost-sub">"Solo Focus · Local Isolated · Custom Pace"</div>
+              <div class="ghost-length-label">Session Length:</div>
+              <div class="ghost-lengths">
+                <button class="ghost-pill active" type="button" data-length="25">25m</button>
+                <button class="ghost-pill" type="button" data-length="45">45m</button>
+                <button class="ghost-pill" type="button" data-length="60">60m</button>
+                <button class="ghost-pill" type="button" data-length="90">90m</button>
+                <button class="ghost-pill" type="button" data-length="open">∞ Open Flow</button>
+              </div>
+              <a class="ghost-start" id="ghostStart" href="sideby-ghost.html?mode=25">▶ Start Ghost Session</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Sideby — no tracking, no leaderboards, no cloud logs of your work.
+  </footer>
+
+  <script>
+    const togetherCol = document.getElementById('togetherCol');
+    const togetherBtn = document.getElementById('togetherBtn');
+    const aloneCol = document.getElementById('aloneCol');
+    const aloneBtn = document.getElementById('aloneBtn');
+
+    togetherBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      togetherCol.classList.toggle('open');
+    });
+
+    aloneBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      aloneCol.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!togetherCol.contains(e.target)) {
+        togetherCol.classList.remove('open');
+      }
+      if (!aloneCol.contains(e.target)) {
+        aloneCol.classList.remove('open');
+      }
+    });
+
+    document.querySelectorAll('.submode-option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.submode-option').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    const ghostPills = document.querySelectorAll('.ghost-pill');
+    const ghostStart = document.getElementById('ghostStart');
+
+    ghostPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        ghostPills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+        ghostStart.href = `sideby-ghost.html?mode=${pill.dataset.length}`;
+      });
+    });
+  </script>
+
+</body>
+</html>

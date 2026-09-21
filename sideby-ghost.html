@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sideby — Ghost Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #120E1A;
+    --bg-soft: #17121F;
+    --surface: #1C1626;
+    --surface-hover: #241C31;
+    --line: rgba(245,241,250,0.09);
+    --line-strong: rgba(245,241,250,0.16);
+    --text: #F5F1FA;
+    --muted: #9B93AE;
+    --muted-dim: #6E668A;
+    --violet: #8B6BFF;
+    --violet-soft: rgba(139,107,255,0.14);
+    --mint: #5EEAD4;
+    --mint-soft: rgba(94,234,212,0.14);
+    --amber: #F2B25C;
+    --amber-soft: rgba(242,178,92,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin: 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 18% -10%, rgba(139,107,255,0.14), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 88% 8%, rgba(94,234,212,0.08), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  header{ padding: 26px 0 0; }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+  }
+  .nav-left{ display:flex; align-items:center; gap: 10px; }
+  .mark{
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(150deg, var(--violet), #5B49C4);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+  }
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+  }
+  .leave{
+    display:flex;
+    align-items:center;
+    gap: 7px;
+    padding: 9px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .leave:hover{ color: var(--text); border-color: var(--line-strong); background: var(--surface); }
+  .leave svg{ width: 15px; height: 15px; }
+
+  /* Room banner */
+  .room-banner{
+    margin-top: 40px;
+    padding: 28px 30px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: rise 0.6s ease-out forwards;
+  }
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(12px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  .room-info .room-kind{
+    font-size: 13px;
+    color: var(--muted-dim);
+    margin-bottom: 6px;
+  }
+  .room-info h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .room-info .room-sub{
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .phase-block{
+    text-align: right;
+  }
+  .phase-label{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px;
+    border-radius: 100px;
+    font-size: 12.5px;
+    margin-bottom: 10px;
+  }
+  .phase-label .dot{
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .phase-label.working{ background: var(--violet-soft); color: #C9BBFF; }
+  .phase-label.working .dot{ background: var(--violet); box-shadow: 0 0 0 3px rgba(139,107,255,0.25); }
+  .phase-label.break{ background: var(--amber-soft); color: #F6CD8F; }
+  .phase-label.break .dot{ background: var(--amber); box-shadow: 0 0 0 3px rgba(242,178,92,0.25); }
+
+  .timer{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 40px;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Participants */
+  .section-label{
+    margin: 40px 0 16px;
+    font-size: 14px;
+    color: var(--muted-dim);
+  }
+
+  .participants{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 640px){
+    .participants{ grid-template-columns: 1fr; }
+  }
+
+  .participant{
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    overflow: hidden;
+    opacity: 0;
+    animation: rise 0.5s ease-out forwards;
+  }
+  .participant:nth-child(1){ animation-delay: 0.05s; }
+  .participant:nth-child(2){ animation-delay: 0.12s; }
+  .participant:nth-child(3){ animation-delay: 0.19s; }
+  .participant:nth-child(4){ animation-delay: 0.26s; }
+
+  .participant.you{ border-color: rgba(139,107,255,0.4); }
+
+  /* Video tile */
+  .video-tile{
+    position: relative;
+    aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .video-tile.p1{ background: linear-gradient(150deg, #2A2140, #1A1424); }
+  .video-tile.p2{ background: linear-gradient(150deg, #16332F, #14202A); }
+  .video-tile.p3{ background: linear-gradient(150deg, #382A18, #221A24); }
+  .video-tile.p4{ background: linear-gradient(150deg, #241C31, #17121F); }
+
+  .video-avatar{
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 21px;
+    color: #100C18;
+  }
+
+  .video-name{
+    position: absolute;
+    left: 12px; bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(10,8,16,0.55);
+    padding: 4px 10px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+  }
+  .you-tag{
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--violet);
+    background: rgba(139,107,255,0.22);
+    padding: 1px 7px;
+    border-radius: 100px;
+  }
+
+  .video-badges{
+    position: absolute;
+    right: 12px; bottom: 10px;
+    display: flex;
+    gap: 6px;
+  }
+  .vb{
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(10,8,16,0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vb svg{ width: 13px; height: 13px; }
+  .vb.off svg{ color: #7A7288; }
+  .vb.on svg{ color: var(--mint); }
+
+  .p-role-tag{
+    position: absolute;
+    left: 12px; top: 10px;
+    font-size: 11.5px;
+    color: var(--muted);
+    background: rgba(10,8,16,0.5);
+    padding: 3px 9px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Checklist */
+  .checklist{
+    padding: 16px 18px 18px;
+  }
+  .checklist-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .checklist-head span:first-child{
+    font-size: 12.5px;
+    color: var(--muted-dim);
+  }
+  .checklist-progress{
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mint);
+    background: var(--mint-soft);
+    padding: 2px 9px;
+    border-radius: 100px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .progress-track{
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .progress-fill{
+    height: 100%;
+    border-radius: 4px;
+    background: var(--mint);
+    transition: width 0.3s ease;
+  }
+  .participant.you .progress-fill{ background: var(--violet); }
+  .participant.you .checklist-progress{ color: var(--violet); background: var(--violet-soft); }
+
+  .check-item{
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 6px 0;
+    font-size: 13.5px;
+    color: var(--text);
+    cursor: default;
+  }
+  .participant.you .check-item{ cursor: pointer; }
+
+  .check-item input{
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .check-box{
+    width: 17px; height: 17px;
+    border-radius: 5px;
+    border: 1.5px solid var(--line-strong);
+    flex-shrink: 0;
+    margin-top: 1.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .check-box svg{
+    width: 11px; height: 11px;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+    stroke: #100C18;
+  }
+  .check-item input:checked + .check-box{
+    background: var(--mint);
+    border-color: var(--mint);
+  }
+  .participant.you .check-item input:checked + .check-box{
+    background: var(--violet);
+    border-color: var(--violet);
+  }
+  .check-item input:checked + .check-box svg{
+    opacity: 1;
+    transform: scale(1);
+  }
+  .check-item input:checked ~ .check-label{
+    color: var(--muted-dim);
+    text-decoration: line-through;
+  }
+  .check-item.readonly .check-box{ pointer-events: none; }
+
+  .empty-seat{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--line-strong);
+    border-radius: 16px;
+    color: var(--muted-dim);
+    font-size: 13px;
+    min-height: 160px;
+    text-align: center;
+    padding: 16px;
+  }
+
+  /* Controls */
+  .controls{
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 780px){
+    .controls{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    padding: 24px 26px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .panel h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 16.5px;
+    margin: 0 0 14px;
+  }
+
+  .chat-locked{
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .chat-locked svg{
+    width: 17px; height: 17px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--muted-dim);
+  }
+
+  .sound-options{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sound-btn{
+    padding: 9px 15px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+    color: var(--muted);
+    font-size: 13.5px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .sound-btn:hover{ color: var(--text); border-color: var(--line-strong); }
+  .sound-btn.active{
+    color: #0E1613;
+    background: var(--mint);
+    border-color: var(--mint);
+  }
+
+  footer{
+    padding: 50px 0;
+    text-align: center;
+    color: var(--muted-dim);
+    font-size: 13.5px;
+  }
+
+  /* Floating mode panel */
+  .float-panel{
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .float-copy p{
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 46ch;
+    line-height: 1.5;
+  }
+  .float-btn{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: 11px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-soft);
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .float-btn:hover{ border-color: var(--violet); }
+  .float-btn.active{
+    background: var(--violet-soft);
+    border-color: var(--violet);
+    color: #D9CEFF;
+  }
+  .float-btn svg{ width: 15px; height: 15px; }
+
+  /* Shared floating widget look (used inside the real PiP window and the fallback) */
+  .float-widget{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #14101E;
+    border-radius: 16px;
+    opacity: 0.3;
+    transition: opacity 0.25s ease;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #F5F1FA;
+  }
+  .float-widget:hover{ opacity: 1; }
+  .float-border{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .float-track{ fill: none; stroke: rgba(245,241,250,0.12); stroke-width: 3; }
+  .float-progress{
+    fill: none;
+    stroke: #8B6BFF;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke 0.3s ease;
+  }
+
+  .float-scroll{
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    padding: 12px;
+  }
+  .float-phase{
+    display: inline-block;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    color: #9B93AE;
+    background: rgba(255,255,255,0.05);
+    padding: 3px 9px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+
+  .float-participants{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .float-p-card{
+    border: 1px solid rgba(245,241,250,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.02);
+  }
+  .float-p-video{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: linear-gradient(150deg, rgba(139,107,255,0.16), rgba(20,16,30,0.4));
+  }
+  .float-avatar{
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 11px;
+    color: #100C18;
+  }
+  .float-p-name{
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+  }
+  .float-you-tag{
+    font-size: 9px;
+    font-weight: 600;
+    color: #C9BBFF;
+    background: rgba(139,107,255,0.25);
+    padding: 1px 6px;
+    border-radius: 100px;
+  }
+
+  .float-checklist{ padding: 8px 10px 9px; }
+  .float-checklist-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .float-checklist-head span:first-child{ font-size: 10px; color: #6E668A; }
+  .float-progress-badge{
+    font-size: 10px;
+    font-weight: 600;
+    color: #5EEAD4;
+    background: rgba(94,234,212,0.14);
+    padding: 1px 7px;
+    border-radius: 100px;
+  }
+  .float-check-item{
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 2.5px 0;
+    font-size: 11px;
+    color: #F5F1FA;
+  }
+  .float-p-card.you .float-check-item{ cursor: pointer; }
+  .float-check-item input{ position: absolute; opacity: 0; width: 0; height: 0; }
+  .float-check-box{
+    width: 13px; height: 13px;
+    border-radius: 4px;
+    border: 1.5px solid rgba(245,241,250,0.22);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .float-check-box svg{ width: 8px; height: 8px; opacity: 0; stroke: #100C18; }
+  .float-check-item input:checked + .float-check-box{ background: #5EEAD4; border-color: #5EEAD4; }
+  .float-p-card.you .float-check-item input:checked + .float-check-box{ background: #8B6BFF; border-color: #8B6BFF; }
+  .float-check-item input:checked + .float-check-box svg{ opacity: 1; }
+  .float-check-item input:checked ~ .float-check-label{ color: #6E668A; text-decoration: line-through; }
+
+  /* Fallback in-page preview, used when the browser has no real PiP support */
+  .float-fallback{
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 230px;
+    height: 340px;
+    display: none;
+    z-index: 999;
+    filter: drop-shadow(0 12px 30px rgba(0,0,0,0.5));
+  }
+  .float-fallback.show{ display: block; }
+  .float-fallback-note{
+    position: absolute;
+    top: -22px;
+    left: 0;
+    font-size: 11px;
+    color: var(--muted-dim);
+  }
+
+  /* End-of-session modal */
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 6, 12, 0.7);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.show{ opacity: 1; pointer-events: auto; }
+
+  .modal-panel{
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 20px;
+    padding: 30px 28px;
+    text-align: center;
+    transform: translateY(10px);
+    transition: transform 0.25s ease;
+  }
+  .modal-overlay.show .modal-panel{ transform: translateY(0); }
+
+  .modal-kicker{
+    font-size: 12.5px;
+    color: var(--mint);
+    background: var(--mint-soft);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  .modal-panel h2{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .modal-panel p{
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0 0 26px;
+  }
+  .modal-actions{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .modal-btn{
+    padding: 13px 18px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease;
+  }
+  .modal-btn:hover{ transform: translateY(-1px); }
+  .modal-btn.primary{
+    background: var(--violet);
+    color: #fff;
+  }
+  .modal-btn.secondary{
+    background: transparent;
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
+  .modal-btn.secondary:hover{ background: var(--surface-hover); }
+
+  /* Break-time "show your product" prompt */
+  .break-prompt{
+    margin-top: 20px;
+    padding: 22px 26px;
+    border-radius: 18px;
+    border: 1px dashed rgba(242,178,92,0.4);
+    background: linear-gradient(150deg, rgba(242,178,92,0.09), var(--surface) 70%);
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .break-prompt.show{ display: flex; }
+  .break-prompt-copy .bp-kicker{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .break-prompt-copy h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0 0 4px;
+  }
+  .break-prompt-copy p{
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .show-product-btn{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 20px;
+    border-radius: 12px;
+    border: none;
+    background: var(--amber);
+    color: #2A1B06;
+    font-size: 14.5px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .show-product-btn:hover{ transform: translateY(-1px); filter: brightness(1.06); }
+
+  /* Presenting / screen-share panel */
+  .present-panel{
+    margin-top: 20px;
+    padding: 24px 26px;
+    border-radius: 18px;
+    border: 1px solid rgba(139,107,255,0.4);
+    background: linear-gradient(150deg, rgba(139,107,255,0.1), var(--surface) 65%);
+    display: none;
+  }
+  .present-panel.show{ display: block; }
+  .present-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .present-head-left{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .present-live-dot{
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #FF6B6B;
+    box-shadow: 0 0 0 4px rgba(255,107,107,0.22);
+    animation: pulseLive 1.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  .present-live-dot.ai{
+    background: var(--violet);
+    box-shadow: 0 0 0 4px rgba(139,107,255,0.22);
+  }
+  @keyframes pulseLive{
+    0%, 100%{ opacity: 1; }
+    50%{ opacity: 0.4; }
+  }
+  .present-head h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0;
+  }
+  .present-timer{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--violet);
+    font-variant-numeric: tabular-nums;
+  }
+  .present-screen{
+    border: 1px dashed var(--line-strong);
+    border-radius: 14px;
+    background: repeating-linear-gradient(135deg, rgba(139,107,255,0.06) 0 14px, rgba(139,107,255,0.02) 14px 28px);
+    padding: 34px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13.5px;
+    margin-bottom: 16px;
+  }
+  .present-screen strong{ display: block; color: var(--text); font-size: 15px; margin-bottom: 6px; }
+  .present-foot{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .present-foot p{
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 40ch;
+  }
+  .stop-present-btn{
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text);
+    font-size: 13.5px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .stop-present-btn:hover{ background: var(--surface-hover); border-color: var(--violet); }
+
+  .ai-feedback-list{
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ai-feedback-list li{
+    font-size: 13.5px;
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    line-height: 1.5;
+  }
+
+  /* Ghost companion card */
+  .video-tile.ghost-video{ background: linear-gradient(150deg, #16332F, #14202A); }
+  .ghost-loop-badge svg{
+    animation: spinLoop 3s linear infinite;
+    transform-origin: center;
+  }
+  @keyframes spinLoop{
+    from{ transform: rotate(0deg); }
+    to{ transform: rotate(360deg); }
+  }
+  .ghost-toggle{
+    display: flex;
+    gap: 6px;
+    padding: 0 18px 16px;
+  }
+  .ghost-toggle-btn{
+    flex: 1;
+    padding: 7px 10px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+    color: var(--muted);
+    font-size: 11.5px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .ghost-toggle-btn:hover{ color: var(--text); }
+  .ghost-toggle-btn.active{
+    color: #0E1613;
+    background: var(--mint);
+    border-color: var(--mint);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <div class="nav-left">
+          <div class="mark">S</div>
+          <div class="wordmark">Sideby</div>
+        </div>
+        <a class="leave" href="sideby-landing.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          Leave room
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <div class="room-banner">
+      <div class="room-info">
+        <div class="room-kind" id="roomKind">👻 Ghost Mode</div>
+        <h1 id="roomTitle">Solo focus room</h1>
+        <div class="room-sub" id="roomSub">"Solo Focus · Local Isolated · Custom Pace"</div>
+      </div>
+      <div class="phase-block">
+        <div class="phase-label working" id="phaseLabel">
+          <span class="dot"></span>
+          <span id="phaseText">Working</span>
+        </div>
+        <div class="timer" id="timer">25:00</div>
+        <button class="stop-present-btn" type="button" id="endFocusBtn" style="display:none; margin-top:10px;">End focus block</button>
+      </div>
+    </div>
+
+    <div class="break-prompt" id="breakPrompt">
+      <div class="break-prompt-copy">
+        <div class="bp-kicker">☕ Break time — <span id="breakTimeLeft">5:00</span> left</div>
+        <h3>Proud of what you just finished?</h3>
+        <p>Get a quick, private read on your session from AI — no audience, just you.</p>
+      </div>
+      <button class="show-product-btn" type="button" id="showProductBtn">
+        🤖 Present to AI
+      </button>
+    </div>
+
+    <div class="present-panel" id="presentPanel">
+      <div id="presentEvaluating">
+        <div class="present-head">
+          <div class="present-head-left">
+            <span class="present-live-dot ai"></span>
+            <h3>AI is reviewing your session</h3>
+          </div>
+          <div class="present-timer" id="presentTimer">3:00</div>
+        </div>
+        <div class="present-screen">
+          <strong>Your work is being analyzed</strong>
+          Sit back — feedback appears here the moment it's ready.
+        </div>
+        <div class="present-foot">
+          <p>This stays fully private. Only you will ever see this feedback.</p>
+          <button class="stop-present-btn" type="button" id="stopPresentBtn">Cancel</button>
+        </div>
+      </div>
+      <div id="presentFeedback" style="display:none;">
+        <div class="present-head">
+          <div class="present-head-left">
+            <h3>🤖 AI Feedback</h3>
+          </div>
+        </div>
+        <ul class="ai-feedback-list" id="aiFeedbackList"></ul>
+        <div class="present-foot" style="justify-content:flex-end;">
+          <button class="show-product-btn" type="button" id="doneFeedbackBtn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Just you — and your ghost</p>
+    <div class="participants">
+
+      <div class="participant you">
+        <div class="video-tile p1">
+          <span class="p-role-tag">Designer</span>
+          <div class="video-avatar" style="background:var(--violet);">Y</div>
+          <div class="video-name">You <span class="you-tag">You</span></div>
+          <div class="video-badges">
+            <span class="vb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5V6.5a3.5 3.5 0 0 0-7 0v5A3.5 3.5 0 0 0 12 15z"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3"/></svg></span>
+            <span class="vb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="6" width="13" height="12" rx="2.5"/><path d="M20.5 9l-4 3 4 3z"/></svg></span>
+          </div>
+        </div>
+        <div class="checklist">
+          <div class="checklist-head">
+            <span>Your checklist</span>
+            <span class="checklist-progress" id="youProgress">0/4</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="youProgressFill" style="width:0%;"></div></div>
+
+          <label class="check-item">
+            <input type="checkbox" class="you-check">
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Sketch icon set — rough pass</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="you-check">
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Clean up strokes and sizing</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="you-check">
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Export set for handoff</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="you-check">
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Drop into onboarding flow</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="participant ghost-companion">
+        <div class="video-tile p2 ghost-video">
+          <span class="p-role-tag">Ghost</span>
+          <div class="video-avatar" id="ghostAvatarInitial" style="background:var(--mint);">↻</div>
+          <div class="video-name" id="ghostCompanionName">Loop: last Tuesday</div>
+          <div class="video-badges">
+            <span class="vb on ghost-loop-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="checklist">
+          <div class="checklist-head">
+            <span id="ghostChecklistLabel">Their checklist (replay)</span>
+            <span class="checklist-progress">4/4</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;"></div></div>
+
+          <div class="check-item readonly">
+            <input type="checkbox" checked disabled>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Sketch icon set — rough pass</span>
+          </div>
+          <div class="check-item readonly">
+            <input type="checkbox" checked disabled>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Clean up strokes and sizing</span>
+          </div>
+          <div class="check-item readonly">
+            <input type="checkbox" checked disabled>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Export set for handoff</span>
+          </div>
+          <div class="check-item readonly">
+            <input type="checkbox" checked disabled>
+            <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+            <span class="check-label">Drop into onboarding flow</span>
+          </div>
+        </div>
+        <div class="ghost-toggle">
+          <button class="ghost-toggle-btn active" type="button" data-companion="replay">Replay of you</button>
+          <button class="ghost-toggle-btn" type="button" data-companion="ai">AI companion</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="controls">
+      <div class="panel">
+        <h3>Solo</h3>
+        <div class="chat-locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>
+            <circle cx="12" cy="12" r="5.5"/>
+          </svg>
+          <span>No one else is in this room — just you and a loop of yourself for company. Nothing you do here is shared.</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Ambient sound</h3>
+        <div class="sound-options">
+          <button class="sound-btn active" type="button">Lo-fi</button>
+          <button class="sound-btn" type="button">White noise</button>
+          <button class="sound-btn" type="button">Silence</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel float-panel">
+      <div class="float-copy">
+        <h3 style="margin:0;">Floating mode</h3>
+        <p id="floatDescription">Pop the timer out into a small window that stays on top of other tabs, at 30% opacity, with time left shown as a line running around the border.</p>
+      </div>
+      <button class="float-btn" type="button" id="floatToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="4" width="18" height="14" rx="2"/>
+          <rect x="12.5" y="11.5" width="7" height="5" rx="1" fill="currentColor" stroke="none"/>
+        </svg>
+        Pop out floating timer
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Fallback floating widget, shown in-page if the browser has no real Picture-in-Picture support -->
+  <div class="float-fallback" id="floatFallback">
+    <span class="float-fallback-note">Floating preview (no PiP support)</span>
+    <div class="float-mount" id="floatFallbackMount" style="width:100%; height:100%;"></div>
+  </div>
+
+  <!-- End-of-session prompt -->
+  <div class="modal-overlay" id="sessionEndModal">
+    <div class="modal-panel">
+      <span class="modal-kicker">Break's over</span>
+      <h2>Nice work. What's next?</h2>
+      <p>You can jump straight into another session here, or head back and join a different room.</p>
+      <div class="modal-actions">
+        <button class="modal-btn primary" type="button" id="continueWorkingBtn">Continue working here</button>
+        <a class="modal-btn secondary" href="sideby-landing.html">Work at another room</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Sideby — no tracking, no leaderboards, no cloud logs of your work.
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const modeParam = params.get('mode') || '25';
+    const isOpenFlow = modeParam === 'open';
+
+    const FIXED_LENGTHS = {
+      25: { work: 25 * 60, brk: 5 * 60 },
+      45: { work: 45 * 60, brk: 9 * 60 },
+      60: { work: 60 * 60, brk: 12 * 60 },
+      90: { work: 90 * 60, brk: 18 * 60 }
+    };
+
+    const cfg = isOpenFlow
+      ? { work: null, brk: 6 * 60 }
+      : (FIXED_LENGTHS[modeParam] || FIXED_LENGTHS[25]);
+
+    document.getElementById('roomKind').textContent = isOpenFlow ? '👻 Ghost Mode · Open Flow' : `👻 Ghost Mode · ${modeParam}m`;
+    document.getElementById('roomTitle').textContent = 'Solo focus room';
+
+    let phase = 'working';
+    let phaseTotal = isOpenFlow ? 0 : cfg.work;
+    let remaining = isOpenFlow ? 0 : cfg.work;
+
+    const timerEl = document.getElementById('timer');
+    const phaseLabelEl = document.getElementById('phaseLabel');
+    const phaseTextEl = document.getElementById('phaseText');
+    const endFocusBtn = document.getElementById('endFocusBtn');
+    if (isOpenFlow) endFocusBtn.style.display = '';
+
+    /* ---------- Floating (Picture-in-Picture) timer — state declared first ---------- */
+    /* so that render()/updateFloatingWidgets() below never reference these before init. */
+
+    const floatToggle = document.getElementById('floatToggle');
+    const floatFallback = document.getElementById('floatFallback');
+    const floatFallbackMount = document.getElementById('floatFallbackMount');
+    let pipWindow = null;
+    let usingFallback = false;
+
+    // Elements inside the currently-open floating widget (real PiP window or fallback), kept in sync each tick.
+    let floatEls = null;
+
+    function trackLength(rectEl){
+      // border perimeter, used to animate the progress line around the frame
+      return rectEl.getTotalLength ? rectEl.getTotalLength() : 2 * ((rectEl.width.baseVal.value || 0) + (rectEl.height.baseVal.value || 0));
+    }
+
+    function updateFloatingWidgets(){
+      if (!floatEls) return;
+      const fraction = phaseTotal > 0 ? (phaseTotal - remaining) / phaseTotal : 1;
+      const offset = floatEls.length * (1 - fraction);
+      floatEls.progressRect.style.strokeDashoffset = String(offset);
+      floatEls.progressRect.style.stroke = phase === 'working' ? '#8B6BFF' : '#F2B25C';
+      if (floatEls.phaseEl) floatEls.phaseEl.textContent = phase === 'working' ? 'Working' : 'Break time';
+    }
+
+    /* ---------- Main countdown (fixed lengths) / count-up (Open Flow) ---------- */
+
+    function formatTime(secs){
+      const m = Math.floor(secs / 60).toString().padStart(2, '0');
+      const s = Math.floor(secs % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function render(){
+      timerEl.textContent = formatTime(remaining);
+      updateFloatingWidgets();
+    }
+
+    const sessionEndModal = document.getElementById('sessionEndModal');
+    const continueWorkingBtn = document.getElementById('continueWorkingBtn');
+    const breakPrompt = document.getElementById('breakPrompt');
+    const breakTimeLeftEl = document.getElementById('breakTimeLeft');
+    let intervalId = null;
+
+    function enterBreak(){
+      phase = 'break';
+      phaseTotal = cfg.brk;
+      remaining = cfg.brk;
+      phaseLabelEl.classList.remove('working');
+      phaseLabelEl.classList.add('break');
+      phaseTextEl.textContent = 'Break time';
+      breakPrompt.classList.add('show');
+      endFocusBtn.style.display = 'none';
+      render();
+    }
+
+    function endSession(){
+      clearInterval(intervalId);
+      intervalId = null;
+      breakPrompt.classList.remove('show');
+      stopPresenting();
+      sessionEndModal.classList.add('show');
+    }
+
+    function tick(){
+      if (phase === 'working'){
+        if (isOpenFlow){
+          remaining += 1;
+        } else if (remaining > 0){
+          remaining -= 1;
+        } else {
+          enterBreak();
+          return;
+        }
+      } else if (phase === 'break'){
+        if (remaining > 0){
+          remaining -= 1;
+          breakTimeLeftEl.textContent = formatTime(remaining);
+        } else {
+          endSession();
+          return;
+        }
+      }
+      render();
+    }
+
+    render();
+    intervalId = setInterval(tick, 1000);
+
+    endFocusBtn.addEventListener('click', enterBreak);
+
+    continueWorkingBtn.addEventListener('click', () => {
+      sessionEndModal.classList.remove('show');
+      phase = 'working';
+      phaseLabelEl.classList.remove('break');
+      phaseLabelEl.classList.add('working');
+      phaseTextEl.textContent = 'Working';
+      breakPrompt.classList.remove('show');
+      if (isOpenFlow){
+        phaseTotal = 0;
+        remaining = 0;
+        endFocusBtn.style.display = '';
+      } else {
+        phaseTotal = cfg.work;
+        remaining = cfg.work;
+      }
+      render();
+      if (!intervalId) intervalId = setInterval(tick, 1000);
+    });
+
+    /* ---------- "Present to AI" evaluation flow ---------- */
+
+    const showProductBtn = document.getElementById('showProductBtn');
+    const presentPanel = document.getElementById('presentPanel');
+    const presentEvaluating = document.getElementById('presentEvaluating');
+    const presentFeedback = document.getElementById('presentFeedback');
+    const presentTimerEl = document.getElementById('presentTimer');
+    const stopPresentBtn = document.getElementById('stopPresentBtn');
+    const doneFeedbackBtn = document.getElementById('doneFeedbackBtn');
+    const aiFeedbackList = document.getElementById('aiFeedbackList');
+
+    const AI_EVAL_DURATION = 3 * 60;
+    let presentRemaining = AI_EVAL_DURATION;
+    let presentIntervalId = null;
+
+    function renderPresentTimer(){
+      presentTimerEl.textContent = formatTime(presentRemaining);
+    }
+
+    function startPresenting(){
+      breakPrompt.classList.remove('show');
+      presentPanel.classList.add('show');
+      presentEvaluating.style.display = '';
+      presentFeedback.style.display = 'none';
+      presentRemaining = AI_EVAL_DURATION;
+      renderPresentTimer();
+      presentIntervalId = setInterval(() => {
+        if (presentRemaining > 0){
+          presentRemaining -= 1;
+          renderPresentTimer();
+        } else {
+          clearInterval(presentIntervalId);
+          presentIntervalId = null;
+          finishEvaluation();
+        }
+      }, 1000);
+    }
+
+    function finishEvaluation(){
+      const total = youChecks.length;
+      const done = document.querySelectorAll('.you-check:checked').length;
+      const lines = [
+        `You checked off ${done} of ${total} tasks this session.`,
+        done === total ? "Every task done — strong finish." : "Consider carrying the rest into your next session.",
+        "Your focus block ran without restarting the timer — good consistency."
+      ];
+      aiFeedbackList.innerHTML = lines.map((l) => `<li>${l}</li>`).join('');
+      presentEvaluating.style.display = 'none';
+      presentFeedback.style.display = '';
+    }
+
+    function stopPresenting(){
+      if (presentIntervalId){
+        clearInterval(presentIntervalId);
+        presentIntervalId = null;
+      }
+      presentPanel.classList.remove('show');
+      // back to the "present to AI" prompt if break time is still running
+      if (phase === 'break') breakPrompt.classList.add('show');
+    }
+
+    showProductBtn.addEventListener('click', startPresenting);
+    stopPresentBtn.addEventListener('click', stopPresenting);
+    doneFeedbackBtn.addEventListener('click', () => {
+      presentPanel.classList.remove('show');
+      if (phase === 'break') breakPrompt.classList.add('show');
+    });
+
+    /* ---------- Ghost companion toggle ---------- */
+
+    const ghostToggleBtns = document.querySelectorAll('.ghost-toggle-btn');
+    const ghostCompanionName = document.getElementById('ghostCompanionName');
+    const ghostChecklistLabel = document.getElementById('ghostChecklistLabel');
+    const ghostAvatarInitial = document.getElementById('ghostAvatarInitial');
+
+    const companionCopy = {
+      replay: { name: 'Loop: last Tuesday', checklistLabel: 'Their checklist (replay)', avatar: '↻' },
+      ai:     { name: 'AI companion', checklistLabel: 'Suggested checklist (AI)', avatar: '✦' }
+    };
+
+    ghostToggleBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        ghostToggleBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const c = companionCopy[btn.dataset.companion];
+        ghostCompanionName.textContent = c.name;
+        ghostChecklistLabel.textContent = c.checklistLabel;
+        ghostAvatarInitial.textContent = c.avatar;
+        if (floatEls && floatEls.participantsSlot) renderFloatParticipants(floatEls.participantsSlot);
+      });
+    });
+
+    document.querySelectorAll('.sound-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sound-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    const youChecks = document.querySelectorAll('.you-check');
+    const youProgress = document.getElementById('youProgress');
+    const youProgressFill = document.getElementById('youProgressFill');
+
+    function updateYouProgress(){
+      const total = youChecks.length;
+      const done = document.querySelectorAll('.you-check:checked').length;
+      youProgress.textContent = `${done}/${total}`;
+      youProgressFill.style.width = `${(done / total) * 100}%`;
+      if (floatEls && floatEls.participantsSlot) renderFloatParticipants(floatEls.participantsSlot);
+    }
+
+    youChecks.forEach((box) => box.addEventListener('change', updateYouProgress));
+
+    /* ---------- Floating widget content: reads live data from the main room ---------- */
+
+    function getParticipantsData(){
+      return Array.from(document.querySelectorAll('.participant')).map((el) => {
+        const isYou = el.classList.contains('you');
+        const avatarEl = el.querySelector('.video-avatar');
+        const nameEl = el.querySelector('.video-name');
+        const roleEl = el.querySelector('.p-role-tag');
+        const tasks = Array.from(el.querySelectorAll('.checklist .check-item')).map((item) => ({
+          label: item.querySelector('.check-label').textContent.trim(),
+          checked: item.querySelector('input').checked
+        }));
+        return {
+          isYou,
+          initial: avatarEl.textContent.trim(),
+          bg: avatarEl.style.background,
+          name: nameEl.childNodes[0].textContent.trim(),
+          role: roleEl.textContent.trim(),
+          tasks
+        };
+      });
+    }
+
+    const checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>';
+
+    function participantCardHTML(p){
+      const done = p.tasks.filter((t) => t.checked).length;
+      const taskRows = p.tasks.map((t, i) => {
+        if (p.isYou){
+          return `<label class="float-check-item">
+            <input type="checkbox" data-you-idx="${i}" ${t.checked ? 'checked' : ''}>
+            <span class="float-check-box">${checkSvg}</span>
+            <span class="float-check-label">${t.label}</span>
+          </label>`;
+        }
+        return `<div class="float-check-item">
+          <input type="checkbox" disabled ${t.checked ? 'checked' : ''}>
+          <span class="float-check-box">${checkSvg}</span>
+          <span class="float-check-label">${t.label}</span>
+        </div>`;
+      }).join('');
+
+      return `
+        <div class="float-p-card ${p.isYou ? 'you' : ''}">
+          <div class="float-p-video">
+            <div class="float-avatar" style="background:${p.bg};">${p.initial}</div>
+            <div class="float-p-name">${p.name}${p.isYou ? ' <span class="float-you-tag">You</span>' : ''}</div>
+          </div>
+          <div class="float-checklist">
+            <div class="float-checklist-head">
+              <span>Checklist</span>
+              <span class="float-progress-badge">${done}/${p.tasks.length}</span>
+            </div>
+            ${taskRows}
+          </div>
+        </div>`;
+    }
+
+    function renderFloatParticipants(slotEl){
+      slotEl.innerHTML = getParticipantsData().map(participantCardHTML).join('');
+      slotEl.querySelectorAll('input[data-you-idx]').forEach((input) => {
+        input.addEventListener('change', () => {
+          const idx = Number(input.dataset.youIdx);
+          youChecks[idx].checked = input.checked;
+          updateYouProgress();
+        });
+      });
+    }
+
+    /* ---------- Floating widget frame markup/styles + open/close handlers ---------- */
+
+    function widgetFrameHTML(w, h){
+      return `
+        <div class="float-widget">
+          <svg class="float-border" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+            <rect class="float-track" x="2" y="2" width="${w - 4}" height="${h - 4}" rx="16"/>
+            <rect class="float-progress" x="2" y="2" width="${w - 4}" height="${h - 4}" rx="16"/>
+          </svg>
+          <div class="float-scroll">
+            <div class="float-phase">Working</div>
+            <div class="float-participants"></div>
+          </div>
+        </div>`;
+    }
+
+    const floatStyles = `
+      *{ box-sizing: border-box; margin: 0; }
+      html, body{ height: 100%; background: transparent; }
+      :root{ --violet: #8B6BFF; --mint: #5EEAD4; --amber: #F2B25C; }
+      body{ font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+      .float-widget{
+        position: relative; width: 100%; height: 100%;
+        background: #14101E; border-radius: 16px;
+        opacity: 0.3; transition: opacity 0.25s ease;
+        color: #F5F1FA;
+      }
+      .float-widget:hover{ opacity: 1; }
+      .float-border{ position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+      .float-track{ fill: none; stroke: rgba(245,241,250,0.12); stroke-width: 3; }
+      .float-progress{ fill: none; stroke: #8B6BFF; stroke-width: 3; stroke-linecap: round; transition: stroke 0.3s ease; }
+      .float-scroll{ position: relative; height: 100%; overflow-y: auto; padding: 12px; }
+      .float-phase{
+        display: inline-block; font-size: 10.5px; letter-spacing: 0.02em; color: #9B93AE;
+        background: rgba(255,255,255,0.05); padding: 3px 9px; border-radius: 100px; margin-bottom: 10px;
+      }
+      .float-participants{ display: flex; flex-direction: column; gap: 10px; }
+      .float-p-card{ border: 1px solid rgba(245,241,250,0.08); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.02); }
+      .float-p-video{ display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: linear-gradient(150deg, rgba(139,107,255,0.16), rgba(20,16,30,0.4)); }
+      .float-avatar{ width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 11px; color: #100C18; }
+      .float-p-name{ font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; min-width: 0; }
+      .float-you-tag{ font-size: 9px; font-weight: 600; color: #C9BBFF; background: rgba(139,107,255,0.25); padding: 1px 6px; border-radius: 100px; }
+      .float-checklist{ padding: 8px 10px 9px; }
+      .float-checklist-head{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+      .float-checklist-head span:first-child{ font-size: 10px; color: #6E668A; }
+      .float-progress-badge{ font-size: 10px; font-weight: 600; color: #5EEAD4; background: rgba(94,234,212,0.14); padding: 1px 7px; border-radius: 100px; }
+      .float-check-item{ display: flex; align-items: flex-start; gap: 6px; padding: 2.5px 0; font-size: 11px; color: #F5F1FA; }
+      .float-p-card.you .float-check-item{ cursor: pointer; }
+      .float-check-item input{ position: absolute; opacity: 0; width: 0; height: 0; }
+      .float-check-box{ width: 13px; height: 13px; border-radius: 4px; border: 1.5px solid rgba(245,241,250,0.22); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+      .float-check-box svg{ width: 8px; height: 8px; opacity: 0; stroke: #100C18; }
+      .float-check-item input:checked + .float-check-box{ background: #5EEAD4; border-color: #5EEAD4; }
+      .float-p-card.you .float-check-item input:checked + .float-check-box{ background: #8B6BFF; border-color: #8B6BFF; }
+      .float-check-item input:checked + .float-check-box svg{ opacity: 1; }
+      .float-check-item input:checked ~ .float-check-label{ color: #6E668A; text-decoration: line-through; }
+    `;
+
+    function mountFloatingWidget(container, w, h){
+      container.innerHTML = widgetFrameHTML(w, h);
+      const progressRect = container.querySelector('.float-progress');
+      const phaseEl = container.querySelector('.float-phase');
+      const participantsSlot = container.querySelector('.float-participants');
+      const length = trackLength(progressRect);
+      progressRect.style.strokeDasharray = String(length);
+      renderFloatParticipants(participantsSlot);
+      return { progressRect, phaseEl, participantsSlot, length };
+    }
+
+    function setToggleState(active, label){
+      floatToggle.classList.toggle('active', active);
+      floatToggle.lastChild.textContent = label;
+    }
+
+    function closeFloating(){
+      if (pipWindow){
+        pipWindow.close();
+        pipWindow = null;
+      }
+      if (usingFallback){
+        usingFallback = false;
+        floatFallback.classList.remove('show');
+      }
+      floatEls = null;
+      setToggleState(false, ' Pop out floating timer');
+    }
+
+    function enableFallback(){
+      usingFallback = true;
+      floatFallback.classList.add('show');
+      floatEls = mountFloatingWidget(floatFallbackMount, 230, 340);
+      updateFloatingWidgets();
+      setToggleState(true, ' Floating timer active (in-page preview)');
+    }
+
+    async function enableRealPiP(){
+      pipWindow = await documentPictureInPicture.requestWindow({ width: 300, height: 420 });
+      pipWindow.document.head.insertAdjacentHTML('beforeend', `<style>${floatStyles}</style>`);
+      const mount = pipWindow.document.createElement('div');
+      mount.style.width = '100%';
+      mount.style.height = '100%';
+      pipWindow.document.body.appendChild(mount);
+      floatEls = mountFloatingWidget(mount, 300, 420);
+      updateFloatingWidgets();
+      pipWindow.addEventListener('pagehide', () => {
+        pipWindow = null;
+        floatEls = null;
+        setToggleState(false, ' Pop out floating timer');
+      });
+      setToggleState(true, ' Floating timer active');
+    }
+
+    floatToggle.addEventListener('click', async () => {
+      if (pipWindow || usingFallback){
+        closeFloating();
+        return;
+      }
+      if ('documentPictureInPicture' in window){
+        try{
+          await enableRealPiP();
+          return;
+        } catch (err){
+          // fall through to in-page preview if the browser blocks the request
+        }
+      }
+      enableFallback();
+    });
+  </script>
+
+</body>
+</html>

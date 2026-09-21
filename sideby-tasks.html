@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sideby — Task Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind precompiled ahead of time with the Tailwind CLI (no runtime CDN/JIT compiler) -->
+<style>
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Inter,ui-sans-serif,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.inset-0{inset:0}.z-50{z-index:50}.-my-0\.5{margin-top:-.125rem;margin-bottom:-.125rem}.mx-auto{margin-left:auto;margin-right:auto}.-ml-1{margin-left:-.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-0\.5{margin-left:.125rem}.ml-1{margin-left:.25rem}.ml-auto{margin-left:auto}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-12{margin-top:3rem}.mt-3{margin-top:.75rem}.mt-8{margin-top:2rem}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.grid{display:grid}.h-1{height:.25rem}.h-2{height:.5rem}.h-3{height:.75rem}.h-3\.5{height:.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-7{height:1.75rem}.h-8{height:2rem}.min-h-\[260px\]{min-height:260px}.min-h-\[60px\]{min-height:60px}.w-16{width:4rem}.w-2{width:.5rem}.w-28{width:7rem}.w-3{width:.75rem}.w-3\.5{width:.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-56{width:14rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-\[230px\]{width:230px}.w-full{width:100%}.w-max{width:-moz-max-content;width:max-content}.min-w-0{min-width:0}.min-w-\[200px\]{min-width:200px}.max-w-6xl{max-width:72rem}.max-w-lg{max-width:32rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-grab{cursor:grab}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-\[9px\]{border-radius:9px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-amber{--tw-border-opacity:1;border-color:rgb(242 178 92/var(--tw-border-opacity,1))}.border-line{border-color:rgba(245,241,250,.09)}.border-lineStrong{border-color:rgba(245,241,250,.16)}.border-mint{--tw-border-opacity:1;border-color:rgb(94 234 212/var(--tw-border-opacity,1))}.border-mint\/40{border-color:rgba(94,234,212,.4)}.border-violet{--tw-border-opacity:1;border-color:rgb(139 107 255/var(--tw-border-opacity,1))}.border-violet\/60{border-color:rgba(139,107,255,.6)}.bg-amber{--tw-bg-opacity:1;background-color:rgb(242 178 92/var(--tw-bg-opacity,1))}.bg-bg{--tw-bg-opacity:1;background-color:rgb(18 14 26/var(--tw-bg-opacity,1))}.bg-black\/20{background-color:rgba(0,0,0,.2)}.bg-black\/70{background-color:rgba(0,0,0,.7)}.bg-mint{--tw-bg-opacity:1;background-color:rgb(94 234 212/var(--tw-bg-opacity,1))}.bg-mintSoft{background-color:rgba(94,234,212,.14)}.bg-surface{--tw-bg-opacity:1;background-color:rgb(28 22 38/var(--tw-bg-opacity,1))}.bg-transparent{background-color:transparent}.bg-violet{--tw-bg-opacity:1;background-color:rgb(139 107 255/var(--tw-bg-opacity,1))}.bg-violet\/70{background-color:rgba(139,107,255,.7)}.bg-violetSoft{background-color:rgba(139,107,255,.14)}.bg-violetSoft\/20{background-color:rgba(139,107,255,.2)}.bg-white\/5{background-color:hsla(0,0%,100%,.05)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}.from-violet{--tw-gradient-from:#8b6bff var(--tw-gradient-from-position);--tw-gradient-to:rgba(139,107,255,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.to-\[\#5B49C4\]{--tw-gradient-to:#5b49c4 var(--tw-gradient-to-position)}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-7{padding:1.75rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-1{padding-bottom:.25rem}.pb-2{padding-bottom:.5rem}.pb-3{padding-bottom:.75rem}.pb-4{padding-bottom:1rem}.pl-3\.5{padding-left:.875rem}.pr-2{padding-right:.5rem}.pt-3{padding-top:.75rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.font-sans{font-family:Inter,ui-sans-serif,sans-serif}.font-serif{font-family:Fraunces,ui-serif,serif}.text-\[10px\]{font-size:10px}.text-\[11\.5px\]{font-size:11.5px}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[15px\]{font-size:15px}.text-\[19px\]{font-size:19px}.text-\[26px\]{font-size:26px}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-snug{line-height:1.375}.tracking-tight{letter-spacing:-.025em}.text-\[\#0E1613\]{--tw-text-opacity:1;color:rgb(14 22 19/var(--tw-text-opacity,1))}.text-ink{--tw-text-opacity:1;color:rgb(245 241 250/var(--tw-text-opacity,1))}.text-ink\/90{color:rgba(245,241,250,.9)}.text-mint{--tw-text-opacity:1;color:rgb(94 234 212/var(--tw-text-opacity,1))}.text-muted{--tw-text-opacity:1;color:rgb(155 147 174/var(--tw-text-opacity,1))}.text-mutedDim{--tw-text-opacity:1;color:rgb(110 102 138/var(--tw-text-opacity,1))}.text-violet{--tw-text-opacity:1;color:rgb(139 107 255/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.line-through{text-decoration-line:line-through}.opacity-0{opacity:0}.opacity-50{opacity:.5}.outline-none{outline:2px solid transparent;outline-offset:2px}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.placeholder\:text-mutedDim::-moz-placeholder{--tw-text-opacity:1;color:rgb(110 102 138/var(--tw-text-opacity,1))}.placeholder\:text-mutedDim::placeholder{--tw-text-opacity:1;color:rgb(110 102 138/var(--tw-text-opacity,1))}.hover\:border-lineStrong:hover{border-color:rgba(245,241,250,.16)}.hover\:border-violet:hover{--tw-border-opacity:1;border-color:rgb(139 107 255/var(--tw-border-opacity,1))}.hover\:bg-mintSoft:hover{background-color:rgba(94,234,212,.14)}.hover\:bg-surfaceHover:hover{--tw-bg-opacity:1;background-color:rgb(36 28 49/var(--tw-bg-opacity,1))}.hover\:text-ink:hover{--tw-text-opacity:1;color:rgb(245 241 250/var(--tw-text-opacity,1))}.hover\:opacity-100:hover{opacity:1}.hover\:opacity-80:hover{opacity:.8}.hover\:opacity-90:hover{opacity:.9}.focus\:border-violet:focus{--tw-border-opacity:1;border-color:rgb(139 107 255/var(--tw-border-opacity,1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:cursor-grabbing:active{cursor:grabbing}.group:hover .group-hover\:opacity-100{opacity:1}@media (min-width:640px){.sm\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}@media (min-width:1024px){.lg\:w-56{width:14rem}.lg\:w-full{width:100%}.lg\:flex-row{flex-direction:row}.lg\:flex-col{flex-direction:column}.lg\:overflow-visible{overflow:visible}.lg\:pb-0{padding-bottom:0}}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
+
+<style>
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 18% -10%, rgba(139,107,255,0.14), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 88% 4%, rgba(94,234,212,0.08), transparent 55%),
+      #120E1A;
+    min-height: 100vh;
+  }
+  ::-webkit-scrollbar{ height: 8px; width: 8px; }
+  ::-webkit-scrollbar-thumb{ background: rgba(245,241,250,0.14); border-radius: 8px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+
+  @keyframes cardIn{
+    from{ opacity: 0; transform: translateY(6px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+  .card-enter{ animation: cardIn 0.25s ease-out; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body class="text-ink font-sans">
+
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useRef } = React;
+
+/* ---------------------------------------------------------------------
+   Preset workflows — selecting one on the left repopulates the week
+   with a sensible default spread across Monday - Friday.
+--------------------------------------------------------------------- */
+
+let uid = 1;
+const nextId = () => `t${uid++}`;
+
+function makeCard(title, duration, status = 'todo') {
+  return { id: nextId(), title, duration, status };
+}
+
+const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
+const ALL_COLUMNS = [...DAYS, 'unplaced'];
+const DAY_META = {
+  mon: { label: 'Monday' },
+  tue: { label: 'Tuesday' },
+  wed: { label: 'Wednesday' },
+  thu: { label: 'Thursday' },
+  fri: { label: 'Friday' },
+};
+
+function emptyWeek() {
+  return { mon: [], tue: [], wed: [], thu: [], fri: [], unplaced: [] };
+}
+
+const PRESETS = {
+  '3D Rendering Pipeline': {
+    icon: 'cube',
+    blurb: 'Sculpt \u2192 shade \u2192 render \u2192 grade',
+    build: () => ({
+      mon: [makeCard('Sculpting', '90m', 'doing'), makeCard('Render environment', '45m')],
+      tue: [makeCard('Shading', '60m'), makeCard('Render character', '60m')],
+      wed: [makeCard('Coloring', '45m')],
+      thu: [makeCard('Compositing', '40m')],
+      fri: [makeCard('Final export', '20m')],
+    }),
+  },
+  'Software Feature': {
+    icon: 'code',
+    blurb: 'Spec \u2192 build \u2192 test \u2192 ship',
+    build: () => ({
+      mon: [makeCard('Write technical spec', '30m', 'done'), makeCard('Set up branch & scaffolding', '20m', 'doing')],
+      tue: [makeCard('Implement core logic', '60m')],
+      wed: [makeCard('Write unit tests', '30m')],
+      thu: [makeCard('Code review fixes', '30m')],
+      fri: [makeCard('Deploy to staging', '20m')],
+    }),
+  },
+  'Content Creation': {
+    icon: 'film',
+    blurb: 'Script \u2192 shoot \u2192 edit \u2192 publish',
+    build: () => ({
+      mon: [makeCard('Outline script', '20m', 'done')],
+      tue: [makeCard('Record raw footage', '60m', 'doing')],
+      wed: [makeCard('Rough cut edit', '45m')],
+      thu: [makeCard('Color & audio pass', '30m')],
+      fri: [makeCard('Write caption & description', '15m'), makeCard('Schedule & publish', '15m')],
+    }),
+  },
+};
+
+const STATUS_META = {
+  todo:  { next: 'doing', ring: 'border-lineStrong' },
+  doing: { next: 'done',  ring: 'border-amber' },
+  done:  { next: 'todo',  ring: 'border-mint' },
+};
+
+/* ---------------------------------------------------------------------
+   Small icons (no external icon package — kept inline and tiny)
+--------------------------------------------------------------------- */
+
+function PresetIcon({ name, className }) {
+  if (name === 'cube') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+        <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" />
+        <path d="M12 3v18M4 7.5l8 4.5 8-4.5" />
+      </svg>
+    );
+  }
+  if (name === 'code') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 9l-4 4 4 4M16 9l4 4-4 4M13 5l-2 15" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="1.5" />
+      <path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4" />
+    </svg>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   Status icon — click to cycle todo -> doing -> done -> todo
+--------------------------------------------------------------------- */
+
+function StatusIcon({ status, onClick }) {
+  const meta = STATUS_META[status];
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={`Status: ${status}. Click to change.`}
+      className={`flex-shrink-0 w-5 h-5 rounded-full border-2 ${meta.ring} flex items-center justify-center transition-colors`}
+    >
+      {status === 'done' && (
+        <svg viewBox="0 0 24 24" className="w-3 h-3 text-mint" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 12l5 5L20 6" />
+        </svg>
+      )}
+      {status === 'doing' && <span className="w-2 h-2 rounded-full bg-amber" />}
+    </button>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   Task card
+--------------------------------------------------------------------- */
+
+function TaskCard({ card, dayId, index, onDragStart, onDragOverCard, onCycleStatus }) {
+  return (
+    <div
+      draggable
+      onDragStart={(e) => onDragStart(e, card.id, dayId)}
+      onDragOver={(e) => onDragOverCard(e, dayId, index)}
+      className="card-enter group flex items-start gap-2.5 rounded-xl border border-line bg-surface px-3.5 py-3 cursor-grab active:cursor-grabbing hover:border-lineStrong hover:bg-surfaceHover transition-colors"
+    >
+      <StatusIcon status={card.status} onClick={() => onCycleStatus(dayId, card.id)} />
+      <div className="min-w-0 flex-1">
+        <p className={`text-sm leading-snug ${card.status === 'done' ? 'text-mutedDim line-through' : 'text-ink'}`}>
+          {card.title}
+        </p>
+        <span className="mt-1.5 inline-block text-[11px] text-muted bg-white/5 border border-line rounded-full px-2 py-0.5">
+          {card.duration}
+        </span>
+      </div>
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 mt-1 text-mutedDim opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <circle cx="9" cy="6" r="1" /><circle cx="9" cy="12" r="1" /><circle cx="9" cy="18" r="1" />
+        <circle cx="15" cy="6" r="1" /><circle cx="15" cy="12" r="1" /><circle cx="15" cy="18" r="1" />
+      </svg>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   Day column
+--------------------------------------------------------------------- */
+
+function DayColumn({ id, cards, dragOverInfo, onDragStart, onDragOverCard, onDragOverColumn, onDrop, onDragLeaveColumn, onCycleStatus }) {
+  const meta = DAY_META[id];
+  const isTargeted = dragOverInfo && dragOverInfo.columnId === id;
+  const totalMinutes = cards.reduce((sum, c) => sum + (parseInt(c.duration, 10) || 0), 0);
+
+  return (
+    <div
+      onDragOver={(e) => onDragOverColumn(e, id, cards.length)}
+      onDragLeave={() => onDragLeaveColumn(id)}
+      onDrop={(e) => onDrop(e, id)}
+      className={`flex flex-col w-[230px] flex-shrink-0 rounded-2xl border bg-black/20 p-3 min-h-[260px] transition-colors ${isTargeted ? 'border-violet/60 bg-violetSoft/20' : 'border-line'}`}
+    >
+      <div className="flex items-center justify-between px-1 pb-3">
+        <h3 className="font-serif text-[15px] font-medium">{meta.label}</h3>
+        <span className="text-[11px] text-muted bg-white/5 border border-line rounded-full px-2 py-0.5 flex-shrink-0">
+          {cards.length ? `${totalMinutes}m` : '\u2014'}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {cards.map((card, index) => (
+          <React.Fragment key={card.id}>
+            {isTargeted && dragOverInfo.index === index && (
+              <div className="h-1 rounded-full bg-violet/70 -my-0.5" />
+            )}
+            <TaskCard
+              card={card}
+              dayId={id}
+              index={index}
+              onDragStart={onDragStart}
+              onDragOverCard={onDragOverCard}
+              onCycleStatus={onCycleStatus}
+            />
+          </React.Fragment>
+        ))}
+        {isTargeted && dragOverInfo.index === cards.length && (
+          <div className="h-1 rounded-full bg-violet/70 -my-0.5" />
+        )}
+        {cards.length === 0 && !isTargeted && (
+          <div className="text-[12px] text-mutedDim border border-dashed border-lineStrong rounded-xl px-3 py-6 text-center">
+            Nothing here — drag a task over
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   Preset sidebar
+--------------------------------------------------------------------- */
+
+function PresetSidebar({ activePreset, onSelect }) {
+  return (
+    <aside className="w-full lg:w-56 flex-shrink-0">
+      <p className="text-[12.5px] text-mutedDim mb-3 px-1">Preset workflows</p>
+      <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
+        {Object.keys(PRESETS).map((name) => {
+          const preset = PRESETS[name];
+          const active = name === activePreset;
+          return (
+            <button
+              key={name}
+              type="button"
+              onClick={() => onSelect(name)}
+              className={`flex-shrink-0 w-56 lg:w-full text-left flex items-start gap-3 rounded-xl border px-3.5 py-3 transition-colors ${
+                active
+                  ? 'border-violet bg-violetSoft'
+                  : 'border-line bg-surface hover:border-lineStrong hover:bg-surfaceHover'
+              }`}
+            >
+              <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${active ? 'bg-violet text-white' : 'bg-white/5 text-muted'}`}>
+                <PresetIcon name={preset.icon} className="w-4 h-4" />
+              </span>
+              <span className="min-w-0">
+                <span className={`block text-sm font-medium ${active ? 'text-ink' : 'text-ink/90'}`}>{name}</span>
+                <span className="block text-[11.5px] text-mutedDim mt-0.5 truncate">{preset.blurb}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </aside>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   Write-your-own block composer + the holding tray for unplaced blocks
+--------------------------------------------------------------------- */
+
+function CustomBlockComposer({ onAdd }) {
+  const [title, setTitle] = useState('');
+  const [duration, setDuration] = useState(30);
+
+  function submit(e) {
+    e.preventDefault();
+    const trimmed = title.trim();
+    if (!trimmed) return;
+    onAdd(trimmed, `${duration}m`);
+    setTitle('');
+  }
+
+  return (
+    <form onSubmit={submit} className="flex items-center gap-2 flex-wrap">
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Write a task, e.g. \u201cClient call prep\u201d"
+        className="flex-1 min-w-[200px] bg-bg border border-lineStrong rounded-lg px-3 py-2 text-sm text-ink placeholder:text-mutedDim focus:outline-none focus:border-violet"
+      />
+      <input
+        type="number"
+        min="5"
+        step="5"
+        value={duration}
+        onChange={(e) => setDuration(e.target.value)}
+        className="w-16 bg-bg border border-lineStrong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-violet"
+      />
+      <span className="text-[12px] text-mutedDim -ml-1">min</span>
+      <button
+        type="submit"
+        className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold bg-violet text-white hover:opacity-90 transition-opacity"
+      >
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Add block
+      </button>
+    </form>
+  );
+}
+
+function UnplacedTray({ cards, dragOverInfo, onAdd, onDragStart, onCycleStatus, onDragOverColumn, onDrop, onDragLeaveColumn }) {
+  const isTargeted = dragOverInfo && dragOverInfo.columnId === 'unplaced';
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-4 mb-6">
+      <p className="text-[12.5px] text-mutedDim mb-3">Write your own blocks here, then drag them into a day</p>
+      <CustomBlockComposer onAdd={onAdd} />
+      <div
+        onDragOver={(e) => onDragOverColumn(e, 'unplaced', cards.length)}
+        onDragLeave={() => onDragLeaveColumn('unplaced')}
+        onDrop={(e) => onDrop(e, 'unplaced')}
+        className={`mt-3 flex items-center gap-2 flex-wrap min-h-[60px] rounded-xl border border-dashed p-2.5 transition-colors ${
+          isTargeted ? 'border-violet/60 bg-violetSoft/20' : 'border-lineStrong'
+        }`}
+      >
+        {cards.length === 0 && (
+          <p className="text-[12px] text-mutedDim px-1.5">No custom blocks yet — write one above and drag it down.</p>
+        )}
+        {cards.map((card, index) => (
+          <div key={card.id} className="w-56 flex-shrink-0">
+            <TaskCard
+              card={card}
+              dayId="unplaced"
+              index={index}
+              onDragStart={onDragStart}
+              onDragOverCard={() => {}}
+              onCycleStatus={onCycleStatus}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------
+   App
+--------------------------------------------------------------------- */
+
+function App() {
+  const FREE_JOB_LIMIT = 1;
+
+  const [jobs, setJobs] = useState(() => [
+    { id: 'job1', name: 'Job 1', presetName: '3D Rendering Pipeline', week: { ...PRESETS['3D Rendering Pipeline'].build(), unplaced: [] } },
+  ]);
+  const [finishedJobs, setFinishedJobs] = useState([]);
+  const [activeJobId, setActiveJobId] = useState('job1');
+  const [isPro, setIsPro] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showFinishModal, setShowFinishModal] = useState(false);
+  const [dragOverInfo, setDragOverInfo] = useState(null); // { columnId, index }
+  const [editingJobId, setEditingJobId] = useState(null);
+  const [expandedFinishedId, setExpandedFinishedId] = useState(null);
+  const draggingRef = useRef(null); // { cardId, fromColumn }
+  const jobCounterRef = useRef(1);
+
+  const jobLimit = isPro ? Infinity : FREE_JOB_LIMIT;
+  const activeJob = jobs.find((j) => j.id === activeJobId) || jobs[0];
+  const week = activeJob.week;
+  const presetName = activeJob.presetName;
+
+  function updateActiveJobWeek(updater) {
+    setJobs((prev) => prev.map((j) => (j.id === activeJobId ? { ...j, week: updater(j.week) } : j)));
+  }
+
+  function applyPreset(name) {
+    setJobs((prev) => prev.map((j) => (j.id === activeJobId ? { ...j, presetName: name, week: { ...PRESETS[name].build(), unplaced: j.week.unplaced } } : j)));
+  }
+
+  function addCustomBlock(title, duration) {
+    updateActiveJobWeek((prev) => ({
+      ...prev,
+      unplaced: [...prev.unplaced, makeCard(title, duration)],
+    }));
+  }
+
+  function renameJob(jobId, newName) {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+    setJobs((prev) => prev.map((j) => (j.id === jobId ? { ...j, name: trimmed } : j)));
+  }
+
+  function addJob() {
+    if (jobs.length >= jobLimit) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    jobCounterRef.current += 1;
+    const defaultPreset = '3D Rendering Pipeline';
+    const newId = `job${jobCounterRef.current}`;
+    const newName = `Job ${jobCounterRef.current}`;
+    setJobs((prev) => [...prev, { id: newId, name: newName, presetName: defaultPreset, week: { ...PRESETS[defaultPreset].build(), unplaced: [] } }]);
+    setActiveJobId(newId);
+  }
+
+  function taskCounts(weekObj) {
+    let total = 0, done = 0;
+    DAYS.forEach((d) => weekObj[d].forEach((c) => { total += 1; if (c.status === 'done') done += 1; }));
+    return { total, done };
+  }
+
+  function requestFinishJob() {
+    setShowFinishModal(true);
+  }
+
+  function confirmFinishJob() {
+    const { total, done } = taskCounts(activeJob.week);
+    const snapshot = {
+      id: `${activeJob.id}-${Date.now()}`,
+      name: activeJob.name,
+      presetName: activeJob.presetName,
+      finishedAt: new Date(),
+      totalTasks: total,
+      doneTasks: done,
+      week: activeJob.week,
+      proofId: Math.random().toString(16).slice(2, 8),
+    };
+    setFinishedJobs((prev) => [snapshot, ...prev]);
+
+    setJobs((prev) => {
+      const remaining = prev.filter((j) => j.id !== activeJob.id);
+      if (remaining.length > 0) {
+        setActiveJobId(remaining[0].id);
+        return remaining;
+      }
+      jobCounterRef.current += 1;
+      const defaultPreset = '3D Rendering Pipeline';
+      const newId = `job${jobCounterRef.current}`;
+      const fresh = { id: newId, name: `Job ${jobCounterRef.current}`, presetName: defaultPreset, week: { ...PRESETS[defaultPreset].build(), unplaced: [] } };
+      setActiveJobId(newId);
+      return [fresh];
+    });
+
+    setShowFinishModal(false);
+  }
+
+  function upgradeToPro() {
+    setIsPro(true);
+    setShowUpgradeModal(false);
+  }
+
+  function handleDragStart(e, cardId, fromColumn) {
+    draggingRef.current = { cardId, fromColumn };
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', cardId);
+  }
+
+  function handleDragOverCard(e, columnId, index) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverInfo({ columnId, index });
+  }
+
+  function handleDragOverColumn(e, columnId, endIndex) {
+    e.preventDefault();
+    setDragOverInfo((prev) => {
+      if (prev && prev.columnId === columnId && prev.index !== undefined && prev.index < endIndex) {
+        return prev;
+      }
+      return { columnId, index: endIndex };
+    });
+  }
+
+  function handleDragLeaveColumn(columnId) {
+    setDragOverInfo((prev) => (prev && prev.columnId === columnId ? null : prev));
+  }
+
+  function handleDrop(e, targetColumn) {
+    e.preventDefault();
+    const drag = draggingRef.current;
+    const info = dragOverInfo;
+    draggingRef.current = null;
+    setDragOverInfo(null);
+    if (!drag) return;
+
+    updateActiveJobWeek((prev) => {
+      const next = {};
+      ALL_COLUMNS.forEach((d) => { next[d] = [...prev[d]]; });
+
+      const fromArr = next[drag.fromColumn];
+      const fromIndex = fromArr.findIndex((c) => c.id === drag.cardId);
+      if (fromIndex === -1) return prev;
+      const [moved] = fromArr.splice(fromIndex, 1);
+
+      const toArr = next[targetColumn];
+      let insertAt = info && info.columnId === targetColumn ? info.index : toArr.length;
+      if (drag.fromColumn === targetColumn && fromIndex < insertAt) insertAt -= 1;
+      insertAt = Math.max(0, Math.min(insertAt, toArr.length));
+      toArr.splice(insertAt, 0, moved);
+
+      return next;
+    });
+  }
+
+  function handleCycleStatus(dayId, cardId) {
+    updateActiveJobWeek((prev) => ({
+      ...prev,
+      [dayId]: prev[dayId].map((c) => (c.id === cardId ? { ...c, status: STATUS_META[c.status].next } : c)),
+    }));
+  }
+
+  const totalTasks = DAYS.reduce((sum, d) => sum + week[d].length, 0);
+
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-10">
+
+      <header className="flex items-center gap-2.5 mb-8">
+        <a href="sideby-landing.html" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+          <div className="w-7 h-7 rounded-[9px] bg-gradient-to-br from-violet to-[#5B49C4] flex items-center justify-center font-serif font-semibold text-white text-sm flex-shrink-0">S</div>
+          <span className="font-serif text-[19px] tracking-tight">Sideby</span>
+        </a>
+        <span className="text-mutedDim">/</span>
+        <span className="text-muted text-sm">Task Planning</span>
+        <span className={`ml-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isPro ? 'text-mint bg-mintSoft' : 'text-muted bg-white/5 border border-line'}`}>
+          {isPro ? 'Pro' : 'Free'}
+        </span>
+      </header>
+
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
+        {jobs.map((job) => (
+          <div
+            key={job.id}
+            className={`flex items-center gap-1.5 pl-3.5 pr-2 py-1.5 rounded-lg text-sm border transition-colors ${
+              job.id === activeJobId
+                ? 'bg-violetSoft border-violet text-ink'
+                : 'border-line text-muted hover:border-lineStrong hover:text-ink'
+            }`}
+          >
+            {editingJobId === job.id ? (
+              <input
+                autoFocus
+                defaultValue={job.name}
+                onBlur={(e) => { renameJob(job.id, e.target.value); setEditingJobId(null); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { renameJob(job.id, e.target.value); setEditingJobId(null); }
+                  if (e.key === 'Escape') setEditingJobId(null);
+                }}
+                className="bg-transparent text-ink text-sm outline-none w-28"
+              />
+            ) : (
+              <button type="button" onClick={() => setActiveJobId(job.id)} className="text-left">
+                {job.name}
+              </button>
+            )}
+            <button
+              type="button"
+              title="Rename job"
+              onClick={() => { setActiveJobId(job.id); setEditingJobId(job.id); }}
+              className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0"
+            >
+              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={addJob}
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm border border-dashed transition-colors ${
+            jobs.length >= jobLimit
+              ? 'border-lineStrong text-mutedDim'
+              : 'border-lineStrong text-muted hover:border-violet hover:text-ink'
+          }`}
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          New job
+          {jobs.length >= jobLimit && !isPro && (
+            <span className="text-[10px] font-semibold text-violet bg-violetSoft px-1.5 py-0.5 rounded-full ml-0.5">PRO</span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={requestFinishJob}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm border border-mint/40 text-mint hover:bg-mintSoft transition-colors ml-auto"
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12l5 5L20 6" />
+          </svg>
+          Finish job
+        </button>
+      </div>
+
+      <div className="mb-6">
+        <h1 className="font-serif text-[26px] font-medium tracking-tight mb-1.5">Plan the shape of your work</h1>
+        <p className="text-muted text-sm max-w-lg">Pick a preset on the left to spread its usual tasks across the week, write your own blocks below, then drag anything to a different day — nothing here is graded.</p>
+      </div>
+
+      <UnplacedTray
+        cards={week.unplaced}
+        dragOverInfo={dragOverInfo}
+        onAdd={addCustomBlock}
+        onDragStart={handleDragStart}
+        onCycleStatus={handleCycleStatus}
+        onDragOverColumn={handleDragOverColumn}
+        onDrop={handleDrop}
+        onDragLeaveColumn={handleDragLeaveColumn}
+      />
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        <PresetSidebar activePreset={presetName} onSelect={applyPreset} />
+
+        <div className="flex-1 min-w-0 overflow-x-auto pb-2">
+          <div className="flex gap-3 w-max">
+            {DAYS.map((id) => (
+              <DayColumn
+                key={id}
+                id={id}
+                cards={week[id]}
+                dragOverInfo={dragOverInfo}
+                onDragStart={handleDragStart}
+                onDragOverCard={handleDragOverCard}
+                onDragOverColumn={handleDragOverColumn}
+                onDrop={handleDrop}
+                onDragLeaveColumn={handleDragLeaveColumn}
+                onCycleStatus={handleCycleStatus}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <p className="text-center text-[12.5px] text-mutedDim mt-8">
+        {totalTasks} tasks this week · drag any card to a different day, guilt-free.
+      </p>
+
+      {finishedJobs.length > 0 && (
+        <div className="mt-12">
+          <p className="text-[12.5px] text-mutedDim mb-3">Finished jobs · proof of work</p>
+          <div className="flex flex-col gap-2">
+            {finishedJobs.map((fj) => {
+              const expanded = expandedFinishedId === fj.id;
+              return (
+                <div key={fj.id} className="rounded-xl border border-line bg-surface overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedFinishedId(expanded ? null : fj.id)}
+                    className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-ink truncate">{fj.name}</p>
+                      <p className="text-[12px] text-mutedDim mt-0.5">
+                        {fj.presetName} · finished {fj.finishedAt.toLocaleDateString()} · {fj.doneTasks}/{fj.totalTasks} tasks done
+                      </p>
+                    </div>
+                    <span className="flex-shrink-0 text-[11px] font-mono text-mint bg-mintSoft px-2 py-1 rounded-full">
+                      #{fj.proofId}
+                    </span>
+                  </button>
+                  {expanded && (
+                    <div className="px-4 pb-4 border-t border-line pt-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                        {DAYS.map((d) => (
+                          <div key={d}>
+                            <p className="text-[11px] text-mutedDim mb-1.5">{DAY_META[d].label}</p>
+                            <div className="flex flex-col gap-1">
+                              {fj.week[d].length === 0 && <p className="text-[11px] text-mutedDim">—</p>}
+                              {fj.week[d].map((c) => (
+                                <p key={c.id} className={`text-[12px] ${c.status === 'done' ? 'text-muted line-through' : 'text-ink'}`}>
+                                  {c.title}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {fj.week.unplaced && fj.week.unplaced.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-line">
+                          <p className="text-[11px] text-mutedDim mb-1.5">Written but never scheduled</p>
+                          <div className="flex flex-col gap-1">
+                            {fj.week.unplaced.map((c) => (
+                              <p key={c.id} className="text-[12px] text-muted">{c.title}</p>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <p className="text-[11.5px] text-mutedDim mt-3">Keep this on hand as a record of the work done, in case a client ever disputes the timeline.</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {showFinishModal && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-5"
+          onClick={() => setShowFinishModal(false)}
+        >
+          <div
+            className="bg-surface border border-lineStrong rounded-2xl p-7 max-w-sm w-full text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="inline-block text-[12.5px] text-mint bg-mintSoft px-3 py-1 rounded-full mb-4">Proof of work</span>
+            <h2 className="font-serif text-xl font-medium mb-2">Finish "{activeJob.name}"?</h2>
+            <p className="text-muted text-sm mb-6">
+              This saves a snapshot — {taskCounts(activeJob.week).done} of {taskCounts(activeJob.week).total} tasks done — to your finished jobs list, then starts a fresh job.
+            </p>
+            <div className="flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={confirmFinishJob}
+                className="bg-mint text-[#0E1613] font-semibold text-sm rounded-xl py-3 hover:opacity-90 transition-opacity"
+              >
+                Save & finish
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowFinishModal(false)}
+                className="text-muted text-sm py-2 hover:text-ink transition-colors"
+              >
+                Keep working
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showUpgradeModal && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-5"
+          onClick={() => setShowUpgradeModal(false)}
+        >
+          <div
+            className="bg-surface border border-lineStrong rounded-2xl p-7 max-w-sm w-full text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="inline-block text-[12.5px] text-violet bg-violetSoft px-3 py-1 rounded-full mb-4">Sideby Pro</span>
+            <h2 className="font-serif text-xl font-medium mb-2">Plan more than one job at a time</h2>
+            <p className="text-muted text-sm mb-6">Free plans can keep one job going. Upgrade to Pro to juggle as many as you need, side by side.</p>
+            <div className="flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={upgradeToPro}
+                className="bg-violet text-white font-semibold text-sm rounded-xl py-3 hover:opacity-90 transition-opacity"
+              >
+                Upgrade to Pro
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowUpgradeModal(false)}
+                className="text-muted text-sm py-2 hover:text-ink transition-colors"
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>

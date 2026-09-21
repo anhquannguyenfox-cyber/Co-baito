@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sideby — Community</title>
+<style>
+  :root{
+    --bg: #020617;
+    --bg-elev: #0f172a;
+    --bg-elev-2: #131c2e;
+    --border: #1e293b;
+    --border-strong: #334155;
+    --text: #cbd5e1;
+    --text-bright: #f1f5f9;
+    --text-mid: #94a3b8;
+    --text-dim: #64748b;
+    --text-dimmer: #475569;
+    --purple: #a855f7;
+    --purple-600: #9333ea;
+    --purple-soft: rgba(168,85,247,0.10);
+    --purple-soft-strong: rgba(147,51,234,0.16);
+    --purple-border: rgba(168,85,247,0.35);
+    --rose: #fb7185;
+    --rose-soft: rgba(244,63,94,0.10);
+    --rose-border: rgba(244,63,94,0.30);
+    --amber: #fbbf24;
+    --amber-soft: rgba(245,158,11,0.10);
+    --amber-border: rgba(245,158,11,0.3);
+    --orange: #fb923c;
+    --orange-soft: rgba(249,115,22,0.1);
+    --orange-border: rgba(249,115,22,0.3);
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, textarea, select{ font-family: inherit; }
+  .icon{ display: inline-block; vertical-align: middle; flex-shrink: 0; }
+  .truncate{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .clamp-2{ display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-3{ display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* Layout */
+  #app{ display: flex; flex-direction: column; min-height: 100vh; }
+  @media (min-width: 880px){ #app{ flex-direction: row; } }
+
+  /* Sidebar */
+  #sidebar{
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px; background: var(--bg); border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  @media (min-width: 880px){
+    #sidebar{ width: 264px; border-bottom: none; border-right: 1px solid var(--border); }
+  }
+  .sidebar-label{ padding: 4px 8px 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+  .channel-btn{
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    border: 1px solid transparent; border-radius: 10px; padding: 10px 12px;
+    background: none; color: var(--text); cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .channel-btn:hover{ background: var(--bg-elev); }
+  .channel-btn.active{ border-color: var(--accent-border); background: var(--accent-soft); }
+  .channel-icon-wrap{
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--accent-soft); color: var(--accent-text);
+  }
+  .channel-btn-text{ min-width: 0; flex: 1; }
+  .channel-btn-name{ display: block; font-size: 13.5px; font-weight: 500; color: var(--text); }
+  .channel-btn.active .channel-btn-name{ color: var(--accent-text); }
+  .channel-btn-handle{ display: block; font-size: 11.5px; color: var(--text-dim); margin-top: 1px; }
+  .channel-count{
+    flex-shrink: 0; font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 100px;
+    background: var(--bg-elev); color: var(--text-dim);
+  }
+  .channel-btn.active .channel-count{ background: var(--accent-soft-strong); color: var(--accent-text); }
+
+  /* Main */
+  #main{ flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  #feed-header{
+    position: sticky; top: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    background: rgba(2,6,23,0.95); backdrop-filter: blur(6px);
+  }
+  #logo-link{
+    display: flex; align-items: center; gap: 9px; flex-shrink: 0; text-decoration: none;
+    color: inherit; padding-right: 16px; margin-right: 4px; border-right: 1px solid var(--border);
+  }
+  #logo-link .mark{
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    background: linear-gradient(150deg, var(--purple), #5B49C4);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #fff;
+  }
+  #logo-link .wordmark{ font-size: 14.5px; font-weight: 600; color: var(--text-bright); }
+  @media (max-width: 560px){ #logo-link .wordmark{ display: none; } #logo-link{ padding-right: 10px; } }
+
+  #feed-header-left{ display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .header-icon-wrap{
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #feed-header h1{ margin: 0; font-size: 14.5px; font-weight: 600; color: var(--text-bright); }
+  #feed-header p{ margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
+  #create-post-btn{
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    border: none; border-radius: 8px; padding: 9px 14px;
+    background: var(--purple-600); color: #fff; font-size: 13.5px; font-weight: 500; cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  #create-post-btn:hover{ background: #7e22ce; }
+
+  #feed-header-right{ display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+  #account-menu-wrap{ position: relative; }
+  #account-btn{
+    display: flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: var(--bg-elev);
+    border-radius: 999px; padding: 4px 8px 4px 4px; cursor: pointer; color: var(--text-dim);
+    transition: border-color 0.15s ease;
+  }
+  #account-btn:hover{ border-color: var(--border-strong); }
+  #account-btn[aria-expanded="true"]{ border-color: var(--purple-border); }
+  #account-dropdown{
+    position: absolute; top: calc(100% + 8px); right: 0; width: 220px; z-index: 20;
+    background: var(--bg-elev); border: 1px solid var(--border-strong); border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.45); padding: 8px; display: none;
+  }
+  #account-dropdown.open{ display: block; }
+  #account-dropdown-head{ display: flex; align-items: center; gap: 10px; padding: 8px 8px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .acct-name{ margin: 0; font-size: 13px; font-weight: 600; color: var(--text-bright); }
+  .acct-email{ margin: 1px 0 0; font-size: 11.5px; color: var(--text-dim); }
+  .dropdown-item{
+    display: flex; align-items: center; gap: 10px; width: 100%; border: none; background: none;
+    color: var(--text); font-size: 13px; padding: 8px; border-radius: 8px; cursor: pointer; text-align: left;
+  }
+  .dropdown-item:hover{ background: var(--bg-elev-2); }
+  .dropdown-item.muted{ color: var(--text-dim); }
+  .dropdown-divider{ height: 1px; background: var(--border); margin: 6px 2px; }
+
+  #feed{ flex: 1; overflow-y: auto; padding: 20px; }
+  #feed-inner{ max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .empty-state{ margin: 60px auto 0; max-width: 300px; text-align: center; }
+  .empty-state p:first-of-type{ margin: 10px 0 2px; font-size: 13.5px; font-weight: 500; color: var(--text-mid); }
+  .empty-state p:last-of-type{ margin: 0; font-size: 13px; color: var(--text-dimmer); }
+
+  /* Locked channel (subscription paywall) */
+  .lock-icon-wrap{ color: var(--text-dimmer); }
+  .pro-tag{
+    display: inline-flex; align-items: center; flex-shrink: 0; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.03em; color: #2c1a06; background: var(--amber); padding: 2px 7px; border-radius: 100px;
+  }
+  #feed-title-row{ display: flex; align-items: center; gap: 8px; }
+  .locked-feed-wrap{ position: relative; max-width: 620px; margin: 0 auto; }
+  .locked-preview{ display: flex; flex-direction: column; gap: 12px; filter: blur(5px) saturate(60%); opacity: 0.55; pointer-events: none; user-select: none; }
+  .locked-overlay{
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .locked-card{
+    width: 100%; max-width: 340px; text-align: center; background: var(--bg-elev);
+    border: 1px solid var(--border-strong); border-radius: 14px; padding: 26px 22px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+  }
+  .locked-card .lock-badge{
+    width: 44px; height: 44px; border-radius: 12px; margin: 0 auto 14px; background: var(--amber-soft);
+    color: var(--amber); display: flex; align-items: center; justify-content: center;
+  }
+  .locked-card h3{ margin: 0 0 6px; font-size: 15px; font-weight: 600; color: var(--text-bright); }
+  .locked-card p{ margin: 0 0 18px; font-size: 13px; line-height: 1.55; color: var(--text-mid); }
+  .locked-card button{
+    border: none; border-radius: 8px; padding: 10px 18px; background: var(--purple-600); color: #fff;
+    font-size: 13.5px; font-weight: 500; cursor: pointer;
+  }
+  .locked-card button:hover{ background: #7e22ce; }
+
+  /* Post card */
+  .post-card{
+    width: 100%; text-align: left; border-radius: 12px; border: 1px solid var(--border);
+    background: rgba(15,23,42,0.6); padding: 16px; cursor: pointer; color: inherit;
+    transition: background 0.15s ease;
+  }
+  .post-card:hover{ background: var(--bg-elev); }
+  .post-card.scam{ border-color: rgba(244,63,94,0.18); }
+  .post-top{ display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .avatar{
+    flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+    font-weight: 600; color: #fff;
+  }
+  .post-author-name{ font-size: 13.5px; font-weight: 500; color: var(--text-bright); }
+  .post-time{ display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-dim); margin-top: 1px; }
+  .post-cover{
+    margin-bottom: 12px; height: 120px; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; border: 1px dashed var(--border-strong); background: var(--bg);
+    font-size: 11.5px; font-weight: 500; color: var(--text-dimmer);
+  }
+  .post-title{ margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--text-bright); }
+  .post-desc{ margin: 0 0 12px; font-size: 13.5px; color: var(--text-mid); line-height: 1.55; }
+  .tag-row{ display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag{
+    display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid var(--border-strong);
+    background: var(--bg-elev-2); color: var(--text-mid); font-size: 11px; font-weight: 500; padding: 2px 10px;
+  }
+  .tag.purple{ background: var(--purple-soft); color: #d8b4fe; border-color: var(--purple-border); }
+  .tag.rose{ background: var(--rose-soft); color: #fda4af; border-color: var(--rose-border); }
+  .post-footer{ display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--text-dim); }
+  .post-footer .chev{ margin-left: auto; color: var(--text-dimmer); }
+  .gig-meta-row{ display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .gig-scope{ font-size: 11.5px; color: var(--text-dim); }
+  .gig-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); padding: 10px; font-size: 12px; }
+  .gig-grid-label{ display: flex; align-items: center; gap: 4px; margin: 0 0 2px; color: var(--text-dim); }
+  .gig-grid-value{ margin: 0; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .blog-location{ display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--text-dim); margin-bottom: 4px; }
+  .severity-row{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .severity-badge{
+    display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; border: 1px solid;
+    font-size: 11px; font-weight: 500; padding: 2px 9px;
+  }
+  .severity-badge.low{ background: var(--amber-soft); color: #fcd34d; border-color: var(--amber-border); }
+  .severity-badge.medium{ background: var(--orange-soft); color: #fdba74; border-color: var(--orange-border); }
+  .severity-badge.high{ background: var(--rose-soft); color: #fda4af; border-color: var(--rose-border); }
+  .via-platform{ font-size: 11.5px; color: var(--text-dim); }
+
+  /* Overlay + drawer */
+  #overlay{
+    position: fixed; inset: 0; background: rgba(2,6,23,0.6); backdrop-filter: blur(2px);
+    z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  #overlay.show{ opacity: 1; pointer-events: auto; }
+
+  #drawer{
+    position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 440px;
+    background: var(--bg); border-left: 1px solid var(--border); z-index: 50;
+    display: flex; flex-direction: column; transform: translateX(100%);
+    transition: transform 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.4);
+  }
+  #drawer.open{ transform: translateX(0); }
+  #drawer-head{ display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  #drawer-head-left{ display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; color: var(--text); }
+  .icon-btn{ border: none; background: none; color: var(--text-dim); cursor: pointer; padding: 6px; border-radius: 6px; display: flex; }
+  .icon-btn:hover{ background: var(--bg-elev); color: var(--text); }
+  #drawer-body{ flex: 1; overflow-y: auto; padding: 18px 20px; }
+  #drawer-post-author{ display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  #drawer-post-title{ margin: 0 0 8px; font-size: 15.5px; font-weight: 600; color: var(--text-bright); }
+  #drawer-post-body{ margin: 0 0 18px; font-size: 13.5px; line-height: 1.6; color: var(--text-mid); }
+  .replies-head{ display: flex; align-items: center; gap: 8px; padding-top: 14px; margin-bottom: 12px; border-top: 1px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+  .no-replies{ border: 1px dashed var(--border); border-radius: 8px; padding: 22px; text-align: center; font-size: 13px; color: var(--text-dimmer); }
+  .comment{ display: flex; gap: 10px; margin-bottom: 14px; }
+  .comment.reply{ margin-left: 38px; margin-top: 10px; margin-bottom: 0; padding-left: 14px; border-left: 1px solid var(--border); }
+  .comment-name-row{ display: flex; align-items: baseline; gap: 8px; }
+  .comment-name{ font-size: 13px; font-weight: 500; color: var(--text-bright); }
+  .comment-time{ font-size: 11px; color: var(--text-dim); }
+  .comment-text{ margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--text-mid); }
+  #drawer-composer{ border-top: 1px solid var(--border); padding: 14px; flex-shrink: 0; }
+  .composer-row{ display: flex; align-items: flex-end; gap: 8px; }
+  #reply-input{
+    flex: 1; resize: none; border: 1px solid var(--border); background: var(--bg-elev);
+    border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 13.5px; max-height: 120px;
+    outline: none;
+  }
+  #reply-input:focus{ border-color: var(--purple-border); }
+  #reply-input::placeholder{ color: var(--text-dimmer); }
+  #reply-send{
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
+    background: var(--purple-600); color: #fff; display: flex; align-items: center; justify-content: center;
+  }
+  #reply-send:disabled{ background: var(--bg-elev); color: var(--text-dimmer); cursor: not-allowed; }
+
+  /* Modal */
+  #modal-overlay{
+    position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 16px;
+  }
+  #modal-overlay.show{ display: flex; }
+  #modal-backdrop{ position: absolute; inset: 0; background: rgba(2,6,23,0.75); backdrop-filter: blur(2px); }
+  #modal{
+    position: relative; width: 100%; max-width: 480px; max-height: 88vh; display: flex; flex-direction: column;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  #modal-head{ display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  #modal-head-left{ display: flex; align-items: center; gap: 8px; }
+  #modal-head h2{ margin: 0; font-size: 13.5px; font-weight: 600; color: var(--text-bright); }
+  #modal-body{ flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .field label{ display: block; margin-bottom: 6px; font-size: 11.5px; font-weight: 500; color: var(--text-dim); }
+  .field input[type="text"], .field textarea, .field select{
+    width: 100%; border: 1px solid var(--border); background: var(--bg-elev); color: var(--text);
+    border-radius: 8px; padding: 9px 11px; font-size: 13.5px; outline: none;
+  }
+  .field textarea{ resize: none; }
+  .field input:focus, .field textarea:focus, .field select:focus{ border-color: var(--purple-border); }
+  .field input::placeholder, .field textarea::placeholder{ color: var(--text-dimmer); }
+  .field-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .type-toggle{ display: flex; gap: 8px; }
+  .type-btn{
+    flex: 1; border: 1px solid var(--border); background: none; color: var(--text-dim); border-radius: 8px;
+    padding: 9px; font-size: 13px; font-weight: 500; cursor: pointer;
+  }
+  .type-btn.active{ border-color: var(--purple-border); background: var(--purple-soft); color: #d8b4fe; }
+  .badge-options{ display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge-opt{
+    border: 1px solid var(--border); background: none; color: var(--text-dim); border-radius: 999px;
+    padding: 5px 12px; font-size: 11.5px; font-weight: 500; cursor: pointer;
+  }
+  .badge-opt.active{ border-color: var(--rose-border); background: var(--rose-soft); color: #fda4af; }
+  #modal-foot{ display: flex; justify-content: flex-end; gap: 8px; padding: 14px 18px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .btn-secondary{ border: none; background: none; color: var(--text-mid); border-radius: 8px; padding: 9px 16px; font-size: 13.5px; font-weight: 500; cursor: pointer; }
+  .btn-secondary:hover{ background: var(--bg-elev); }
+  .btn-primary{ border: none; background: var(--purple-600); color: #fff; border-radius: 8px; padding: 9px 16px; font-size: 13.5px; font-weight: 500; cursor: pointer; }
+  .btn-primary:hover{ background: #7e22ce; }
+  .btn-primary:disabled{ background: var(--bg-elev); color: var(--text-dimmer); cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <nav id="sidebar">
+    <div class="sidebar-label">Community</div>
+    <div id="channel-list"></div>
+  </nav>
+
+  <main id="main">
+    <div id="feed-header">
+      <a id="logo-link" href="sideby-landing.html" aria-label="Back to Sideby home">
+        <span class="mark">S</span>
+        <span class="wordmark">Sideby</span>
+      </a>
+      <div id="feed-header-left">
+        <span class="header-icon-wrap" id="header-icon"></span>
+        <div>
+          <h1 id="feed-title"></h1>
+          <p id="feed-desc"></p>
+        </div>
+      </div>
+      <div id="feed-header-right">
+        <button id="create-post-btn" type="button">
+          <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Create Post</span>
+        </button>
+        <div id="account-menu-wrap">
+          <button id="account-btn" type="button" aria-label="Account and settings" aria-haspopup="true" aria-expanded="false">
+            <span class="avatar" id="account-avatar" style="width:32px;height:32px;background:#334155;font-size:12.5px">YO</span>
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div id="account-dropdown">
+            <div id="account-dropdown-head">
+              <span class="avatar" style="width:34px;height:34px;background:#334155;font-size:13px">YO</span>
+              <div>
+                <p class="acct-name">You</p>
+                <p class="acct-email">Signed in · Free plan</p>
+              </div>
+            </div>
+            <button type="button" class="dropdown-item">
+              <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-3.6 3.4-6.2 7.5-6.2s7.5 2.6 7.5 6.2"/></svg>
+              <span>Account</span>
+            </button>
+            <button type="button" class="dropdown-item">
+              <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1h-.2a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.6v-.2a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/></svg>
+              <span>Settings</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button type="button" class="dropdown-item muted">
+              <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+              <span>Sign out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="feed">
+      <div id="feed-inner"></div>
+    </div>
+  </main>
+</div>
+
+<div id="overlay"></div>
+<aside id="drawer">
+  <div id="drawer-head">
+    <div id="drawer-head-left"></div>
+    <button class="icon-btn" id="drawer-close" aria-label="Close">
+      <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div id="drawer-body"></div>
+  <div id="drawer-composer">
+    <div class="composer-row">
+      <textarea id="reply-input" rows="1" placeholder="Write a reply…"></textarea>
+      <button id="reply-send" type="button" aria-label="Send reply">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<div id="modal-overlay">
+  <div id="modal-backdrop"></div>
+  <div id="modal">
+    <div id="modal-head">
+      <div id="modal-head-left"></div>
+      <button class="icon-btn" id="modal-close" aria-label="Close">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="modal-body"></div>
+    <div id="modal-foot">
+      <button class="btn-secondary" id="modal-cancel" type="button">Cancel</button>
+      <button class="btn-primary" id="modal-submit" type="button" disabled>Post</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* -------------------------------------------------------------------------
+ * Icons (inline SVG, no dependencies)
+ * ---------------------------------------------------------------------- */
+const ICONS = {
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  briefcase: '<rect x="3.5" y="8" width="17" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  pen: '<path d="M4 19.5V6a2 2 0 0 1 2-2h10.5L20 7.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2.5z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+  shield: '<path d="M12 3l8 4v5c0 5-3.5 7.8-8 9-4.5-1.2-8-4-8-9V7l8-4z"/><path d="M12 8v5"/><circle cx="12" cy="16" r="0.6" fill="currentColor" stroke="none"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  message: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  chevron: '<path d="m9 18 6-6-6-6"/>',
+  dollar: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  code: '<path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>',
+  mappin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  sparkles: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>',
+  lock: '<rect x="5.5" y="10.5" width="13" height="9" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+  user: '<circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-3.6 3.4-6.2 7.5-6.2s7.5 2.6 7.5 6.2"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1h-.2a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.6v-.2a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/>',
+  chevrondown: '<path d="m6 9 6 6 6-6"/>',
+};
+function svg(name, size=16, extra=''){
+  return `<svg class="icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ${extra}>${ICONS[name]}</svg>`;
+}
+
+/* -------------------------------------------------------------------------
+ * Channel config
+ * ---------------------------------------------------------------------- */
+const CHANNELS = [
+  { id: 'peer-review', label: 'Peer Review', handle: '#peer-review', description: 'Share WIP work and get honest feedback from other creators.', icon: 'eye', accentText: '#d8b4fe', accentSoft: 'var(--purple-soft)', accentSoftStrong: 'var(--purple-soft-strong)', accentBorder: 'var(--purple-border)', locked: true },
+  { id: 'gig-sharing', label: 'Gig Sharing', handle: '#gig-sharing', description: 'Post or find freelance sub-contracts within the community.', icon: 'briefcase', accentText: '#d8b4fe', accentSoft: 'var(--purple-soft)', accentSoftStrong: 'var(--purple-soft-strong)', accentBorder: 'var(--purple-border)', locked: true },
+  { id: 'personal-blog', label: 'Personal Blog', handle: '#personal-blog', description: 'A low-pressure space for daily thoughts and remote-life stories.', icon: 'pen', accentText: '#d8b4fe', accentSoft: 'var(--purple-soft)', accentSoftStrong: 'var(--purple-soft-strong)', accentBorder: 'var(--purple-border)', locked: false },
+  { id: 'scam-alert', label: 'Scam Alert', handle: '#scam-alert', description: 'Warn the community about toxic clients and payment scams.', icon: 'shield', accentText: '#fda4af', accentSoft: 'var(--rose-soft)', accentSoftStrong: 'rgba(244,63,94,0.2)', accentBorder: 'var(--rose-border)', locked: false },
+];
+const channelMeta = (id) => CHANNELS.find((c) => c.id === id);
+
+const SEVERITY_LABEL = { low: 'Low risk', medium: 'Medium risk', high: 'High risk' };
+
+function initials(name){
+  return name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+}
+function avatarHtml(name, color, size){
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${color};font-size:${Math.round(size*0.4)}px">${initials(name)}</div>`;
+}
+const AVATAR_COLORS = { purple: '#a855f7', teal: '#14b8a6', amber: '#f59e0b', sky: '#0ea5e9', rose: '#f43f5e', emerald: '#10b981' };
+
+/* -------------------------------------------------------------------------
+ * Mock data
+ * ---------------------------------------------------------------------- */
+let idCounter = 1000;
+const nextId = () => `p${idCounter++}`;
+
+let posts = [
+  { id: 'pr-1', channel: 'peer-review', author: 'Priya Malhotra', avatarColor: AVATAR_COLORS.purple, timestamp: '25m ago',
+    title: 'Dashboard redesign — v2 mockup',
+    description: 'Reworked the analytics dashboard for a fintech client. Trying to reduce visual noise on the KPI row without losing hierarchy. Would love a second opinion before I present tomorrow.',
+    coverLabel: 'Figma · Dashboard v2', tags: ['UI Design', 'Figma', 'SaaS'],
+    comments: [
+      { id: 'c1', author: 'Dev Okafor', avatarColor: AVATAR_COLORS.teal, timestamp: '18m ago',
+        content: 'The KPI cards feel much calmer now. Only thing — the secondary metric text might be a touch too light against that background.',
+        replies: [ { id: 'c1-1', author: 'Priya Malhotra', avatarColor: AVATAR_COLORS.purple, timestamp: '12m ago', content: 'Good catch, bumping it from slate-500 to slate-400 should fix the contrast.' } ] },
+      { id: 'c2', author: 'Marisol Torres', avatarColor: AVATAR_COLORS.amber, timestamp: '9m ago', content: 'Love the reduced chart clutter. Curious how it holds up with real, messier data though.' },
+    ] },
+  { id: 'pr-2', channel: 'peer-review', author: 'Chen Wei', avatarColor: AVATAR_COLORS.sky, timestamp: '3h ago',
+    title: 'Invoice template — first pass',
+    description: 'First draft of a reusable invoice template for solo consultants. Aiming for something that feels premium without being fussy. Brutal honesty welcome.',
+    coverLabel: 'PDF · Invoice Template', tags: ['Branding', 'Print'],
+    comments: [ { id: 'c3', author: 'Sam Reyes', avatarColor: AVATAR_COLORS.rose, timestamp: '2h ago', content: 'Line item spacing at the bottom feels a little cramped once you hit 5+ items. Otherwise clean.' } ] },
+  { id: 'pr-3', channel: 'peer-review', author: 'Ade Kuti', avatarColor: AVATAR_COLORS.emerald, timestamp: '1d ago',
+    title: 'Onboarding flow — mobile',
+    description: 'Three-screen onboarding for a habit-tracking app. Testing whether the progress dots or a thin top bar reads better on mobile.',
+    coverLabel: 'Framer · Mobile Flow', tags: ['Mobile', 'UX'], comments: [] },
+
+  { id: 'gig-1', channel: 'gig-sharing', author: 'Lena Fischer', avatarColor: AVATAR_COLORS.amber, timestamp: '40m ago', postType: 'offering',
+    title: '5-page WordPress rebuild for a local bakery',
+    description: 'Too booked to take this on myself — recurring client, easy scope, flexible timeline. Happy to make the introduction.',
+    budget: '$1,200 fixed', techStack: ['WordPress', 'Elementor'], scope: '5 pages · 2 weeks',
+    comments: [ { id: 'gc1', author: 'Tomasz Piotrowski', avatarColor: AVATAR_COLORS.purple, timestamp: '20m ago', content: 'I can take this — sent you a DM with my portfolio.' } ] },
+  { id: 'gig-2', channel: 'gig-sharing', author: 'Isabel Nakamura', avatarColor: AVATAR_COLORS.teal, timestamp: '5h ago', postType: 'seeking',
+    title: 'Looking for a backend dev — Stripe subscriptions',
+    description: 'Need someone to wire up metered billing on an existing Node API. Spec is written, just need hands to implement and test.',
+    budget: '$60–80/hr', techStack: ['Node.js', 'Stripe', 'PostgreSQL'], scope: '~15 hrs · 1 week', comments: [] },
+  { id: 'gig-3', channel: 'gig-sharing', author: 'Marisol Torres', avatarColor: AVATAR_COLORS.amber, timestamp: '1d ago', postType: 'offering',
+    title: "Children's book illustration, 12 spreads",
+    description: 'A returning client of mine needs an illustrator — not my lane, but the budget and client are both great to work with.',
+    budget: '$2,500 fixed', techStack: ['Procreate', 'Illustration'], scope: '12 spreads · 3 weeks',
+    comments: [ { id: 'gc2', author: 'Chen Wei', avatarColor: AVATAR_COLORS.sky, timestamp: '20h ago', content: "This is right up a friend's alley, forwarding it to her." } ] },
+
+  { id: 'blog-1', channel: 'personal-blog', author: 'Tomasz Piotrowski', avatarColor: AVATAR_COLORS.purple, timestamp: '2h ago',
+    title: 'Why I stopped taking calls before 11am', location: 'Lisbon, Portugal',
+    content: "Three months into working remote-first and the biggest unlock wasn't a tool, it was a boundary. Mornings are mine now — deep work, a walk, no Slack. Clients adjusted faster than I expected.",
+    comments: [ { id: 'bc1', author: 'Ade Kuti', avatarColor: AVATAR_COLORS.emerald, timestamp: '1h ago', content: 'Needed to read this today. Setting the same boundary starting Monday.' } ] },
+  { id: 'blog-2', channel: 'personal-blog', author: 'Sam Reyes', avatarColor: AVATAR_COLORS.rose, timestamp: '1d ago',
+    title: 'My first year freelancing, honestly', location: 'Chiang Mai, Thailand',
+    content: "Six months with almost no income, one client who paid 90 days late, and a lot of doubt. Writing it down because I didn't see anyone else admit the messy middle — only the highlight reels.",
+    comments: [
+      { id: 'bc2', author: 'Priya Malhotra', avatarColor: AVATAR_COLORS.purple, timestamp: '20h ago', content: 'This is exactly the kind of honesty this channel needs. Thank you for writing it.' },
+      { id: 'bc3', author: 'Dev Okafor', avatarColor: AVATAR_COLORS.teal, timestamp: '18h ago', content: 'The 90-days-late client story is painfully familiar.' },
+    ] },
+  { id: 'blog-3', channel: 'personal-blog', author: 'Marisol Torres', avatarColor: AVATAR_COLORS.amber, timestamp: '3d ago',
+    title: 'Small win: finished a project without burning out', location: 'Mexico City, Mexico',
+    content: 'Nothing dramatic today — just wanted to note that I wrapped a 6-week project and actually feel fine. Pacing the milestones instead of sprinting the whole way made the difference.',
+    comments: [] },
+
+  { id: 'scam-1', channel: 'scam-alert', author: 'Priya Malhotra', avatarColor: AVATAR_COLORS.purple, timestamp: '1h ago',
+    title: '"NovaBuild Studios" on Upwork — unfunded milestones',
+    description: 'Asked me to start work before the milestone was funded, then went quiet after the third deliverable. Screenshots of the chat and contract in the thread below.',
+    badges: ['Unpaid Invoice', 'Ghosted'], platform: 'Upwork', severity: 'high',
+    comments: [ { id: 'sc1', author: 'Chen Wei', avatarColor: AVATAR_COLORS.sky, timestamp: '40m ago', content: 'Reported the profile. Same name showed up on a scam-report subreddit last month too.' } ] },
+  { id: 'scam-2', channel: 'scam-alert', author: 'Ade Kuti', avatarColor: AVATAR_COLORS.emerald, timestamp: '6h ago',
+    title: '"PixelForge Media" requesting off-platform deposits',
+    description: "Reached out for a logo redesign, then asked for a deposit via personal Venmo instead of the platform escrow. Didn't proceed, flagging in case others are contacted.",
+    badges: ['Fake Agency'], platform: 'Direct outreach', severity: 'medium',
+    comments: [ { id: 'sc2', author: 'Lena Fischer', avatarColor: AVATAR_COLORS.amber, timestamp: '5h ago', content: 'Got the same message last week. Glad you posted this.' } ] },
+  { id: 'scam-3', channel: 'scam-alert', author: 'Isabel Nakamura', avatarColor: AVATAR_COLORS.teal, timestamp: '2d ago',
+    title: 'Client rewrote contract terms after delivery',
+    description: 'Delivered the agreed scope, then received a "revised" contract with a lower rate attached to the final invoice, claiming it was agreed verbally. It wasn\'t. Keep everything in writing.',
+    badges: ['Contract Breach'], platform: 'Direct client', severity: 'low', comments: [] },
+];
+
+/* -------------------------------------------------------------------------
+ * State
+ * ---------------------------------------------------------------------- */
+const state = {
+  activeChannel: 'personal-blog',
+  selectedThreadPostId: null,
+  isThreadOpen: false,
+  isModalOpen: false,
+  modalBadges: [],
+  modalPostType: 'offering',
+  modalSeverity: 'medium',
+};
+
+/* -------------------------------------------------------------------------
+ * Render: sidebar
+ * ---------------------------------------------------------------------- */
+function renderSidebar(){
+  const wrap = document.getElementById('channel-list');
+  wrap.innerHTML = CHANNELS.map((ch) => {
+    const count = posts.filter((p) => p.channel === ch.id).length;
+    const active = ch.id === state.activeChannel;
+    const rightBadge = ch.locked
+      ? `<span class="pro-tag">PRO</span>`
+      : `<span class="channel-count">${count}</span>`;
+    return `
+      <button class="channel-btn${active ? ' active' : ''}" data-channel="${ch.id}"
+        style="--accent-soft:${ch.accentSoft};--accent-soft-strong:${ch.accentSoftStrong};--accent-border:${active ? ch.accentBorder : 'transparent'};--accent-text:${ch.accentText}">
+        <span class="channel-icon-wrap">${svg(ch.icon, 16)}</span>
+        <span class="channel-btn-text">
+          <span class="channel-btn-name">${ch.label}${ch.locked ? svg('lock', 11, 'class="icon lock-icon-wrap" style="margin-left:5px"') : ''}</span>
+          <span class="channel-btn-handle">${ch.handle}</span>
+        </span>
+        ${rightBadge}
+      </button>`;
+  }).join('');
+
+  wrap.querySelectorAll('.channel-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.activeChannel = btn.dataset.channel;
+      renderAll();
+    });
+  });
+}
+
+/* -------------------------------------------------------------------------
+ * Render: feed header + cards
+ * ---------------------------------------------------------------------- */
+function postCardHtml(post){
+  const commentCount = post.comments.length;
+  const footer = `<div class="post-footer">${svg('message',13)}<span>${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}</span>${svg('chevron',13,'class="icon chev"')}</div>`;
+  const top = `<div class="post-top">${avatarHtml(post.author, post.avatarColor, 34)}<div><div class="post-author-name">${post.author}</div><div class="post-time">${svg('clock',10)}${post.timestamp}</div></div></div>`;
+
+  if (post.channel === 'peer-review'){
+    return `<button class="post-card" data-post="${post.id}">
+      ${top}
+      <div class="post-cover">${post.coverLabel}</div>
+      <h3 class="post-title">${post.title}</h3>
+      <p class="post-desc clamp-2">${post.description}</p>
+      <div class="tag-row">${post.tags.map((t) => `<span class="tag">${t}</span>`).join('')}</div>
+      ${footer}
+    </button>`;
+  }
+  if (post.channel === 'gig-sharing'){
+    return `<button class="post-card" data-post="${post.id}">
+      ${top}
+      <div class="gig-meta-row"><span class="tag purple">${post.postType === 'offering' ? 'Offering' : 'Seeking'}</span><span class="gig-scope">${post.scope}</span></div>
+      <h3 class="post-title">${post.title}</h3>
+      <p class="post-desc clamp-2">${post.description}</p>
+      <div class="gig-grid">
+        <div><p class="gig-grid-label">${svg('dollar',11)} Budget</p><p class="gig-grid-value">${post.budget}</p></div>
+        <div><p class="gig-grid-label">${svg('code',11)} Tech Stack</p><p class="gig-grid-value">${post.techStack.join(', ')}</p></div>
+      </div>
+      ${footer}
+    </button>`;
+  }
+  if (post.channel === 'personal-blog'){
+    return `<button class="post-card" data-post="${post.id}">
+      ${top}
+      <div class="blog-location">${svg('mappin',11)}${post.location}</div>
+      <h3 class="post-title">${post.title}</h3>
+      <p class="post-desc clamp-3" style="margin-bottom:0">${post.content}</p>
+      ${footer}
+    </button>`;
+  }
+  // scam-alert
+  return `<button class="post-card scam" data-post="${post.id}">
+    ${top}
+    <div class="severity-row">
+      <span class="severity-badge ${post.severity}">${svg('shield',11)}${SEVERITY_LABEL[post.severity]}</span>
+      <span class="via-platform">via ${post.platform}</span>
+    </div>
+    <h3 class="post-title">${post.title}</h3>
+    <p class="post-desc clamp-2">${post.description}</p>
+    <div class="tag-row">${post.badges.map((b) => `<span class="tag rose">${b}</span>`).join('')}</div>
+    ${footer}
+  </button>`;
+}
+
+function renderFeed(){
+  const meta = channelMeta(state.activeChannel);
+  document.getElementById('header-icon').innerHTML = svg(meta.icon, 17);
+  document.getElementById('header-icon').style.background = meta.accentSoft;
+  document.getElementById('header-icon').style.color = meta.accentText;
+  document.getElementById('feed-title').innerHTML = meta.handle + (meta.locked ? ' <span class="pro-tag">PRO</span>' : '');
+  document.getElementById('feed-desc').textContent = meta.description;
+
+  const createBtn = document.getElementById('create-post-btn');
+  createBtn.style.display = meta.locked ? 'none' : 'flex';
+
+  const channelPosts = posts.filter((p) => p.channel === state.activeChannel);
+  const inner = document.getElementById('feed-inner');
+
+  if (meta.locked){
+    const preview = channelPosts.length > 0
+      ? channelPosts.map(postCardHtml).join('')
+      : `<div class="post-card"></div><div class="post-card"></div>`;
+    inner.innerHTML = `
+      <div class="locked-feed-wrap">
+        <div class="locked-preview">${preview}</div>
+        <div class="locked-overlay">
+          <div class="locked-card">
+            <div class="lock-badge">${svg('lock', 20)}</div>
+            <h3>Unlock ${meta.handle}</h3>
+            <p>${meta.label} is a Sideby Pro feature. Upgrade your plan to read and post in this channel.</p>
+            <button type="button" id="unlock-btn">Upgrade to Pro</button>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (channelPosts.length === 0){
+    inner.innerHTML = `<div class="empty-state">${svg('sparkles',22)}<p>Nothing here yet</p><p>Be the first to post in ${meta.handle}.</p></div>`;
+  } else {
+    inner.innerHTML = channelPosts.map(postCardHtml).join('');
+  }
+
+  inner.querySelectorAll('.post-card').forEach((card) => {
+    card.addEventListener('click', () => openThread(card.dataset.post));
+  });
+}
+
+/* -------------------------------------------------------------------------
+ * Render: thread drawer
+ * ---------------------------------------------------------------------- */
+function commentHtml(comment, depth){
+  const replies = (comment.replies || []).map((r) => commentHtml(r, depth + 1)).join('');
+  return `<div class="comment${depth > 0 ? ' reply' : ''}">
+      ${avatarHtml(comment.author, comment.avatarColor, 28)}
+      <div style="min-width:0;flex:1">
+        <div class="comment-name-row"><span class="comment-name">${comment.author}</span><span class="comment-time">${comment.timestamp}</span></div>
+        <p class="comment-text">${comment.content}</p>
+        ${replies}
+      </div>
+    </div>`;
+}
+
+function openThread(postId){
+  state.selectedThreadPostId = postId;
+  state.isThreadOpen = true;
+  renderDrawer();
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeThread(){
+  state.isThreadOpen = false;
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('drawer').classList.remove('open');
+  setTimeout(() => { state.selectedThreadPostId = null; }, 300);
+}
+
+function renderDrawer(){
+  const post = posts.find((p) => p.id === state.selectedThreadPostId);
+  if (!post) return;
+  const meta = channelMeta(post.channel);
+
+  document.getElementById('drawer-head-left').innerHTML = `<span style="color:${meta.accentText};display:flex">${svg(meta.icon, 15)}</span><span>${meta.handle}</span>`;
+
+  const bodyText = post.channel === 'personal-blog' ? post.content : post.description;
+
+  let extra = '';
+  if (post.channel === 'scam-alert'){
+    extra = `<div class="tag-row" style="margin-bottom:18px">${post.badges.map((b) => `<span class="tag rose">${b}</span>`).join('')}</div>`;
+  } else if (post.channel === 'gig-sharing'){
+    extra = `<div class="gig-grid" style="margin-bottom:18px">
+      <div><p class="gig-grid-label">Budget</p><p class="gig-grid-value">${post.budget}</p></div>
+      <div><p class="gig-grid-label">Scope</p><p class="gig-grid-value">${post.scope}</p></div>
+    </div>`;
+  }
+
+  const commentsHtml = post.comments.length === 0
+    ? `<div class="no-replies">No replies yet — start the conversation.</div>`
+    : post.comments.map((c) => commentHtml(c, 0)).join('');
+
+  document.getElementById('drawer-body').innerHTML = `
+    <div id="drawer-post-author">${avatarHtml(post.author, post.avatarColor, 36)}<div><div class="post-author-name">${post.author}</div><div class="post-time">${post.timestamp}</div></div></div>
+    <h2 id="drawer-post-title">${post.title}</h2>
+    <p id="drawer-post-body">${bodyText}</p>
+    ${extra}
+    <div class="replies-head">${svg('message',13)}${post.comments.length} ${post.comments.length === 1 ? 'Reply' : 'Replies'}</div>
+    ${commentsHtml}
+  `;
+
+  document.getElementById('reply-input').value = '';
+  updateReplyButton();
+}
+
+function updateReplyButton(){
+  const val = document.getElementById('reply-input').value.trim();
+  document.getElementById('reply-send').disabled = !val;
+}
+
+function sendReply(){
+  const input = document.getElementById('reply-input');
+  const content = input.value.trim();
+  if (!content || !state.selectedThreadPostId) return;
+  const post = posts.find((p) => p.id === state.selectedThreadPostId);
+  post.comments.push({ id: `c${Date.now()}`, author: 'You', avatarColor: AVATAR_COLORS.purple, timestamp: 'just now', content });
+  input.value = '';
+  renderDrawer();
+  renderSidebar();
+  renderFeed();
+}
+
+/* -------------------------------------------------------------------------
+ * Render: create post modal
+ * ---------------------------------------------------------------------- */
+function openModal(){
+  state.isModalOpen = true;
+  state.modalBadges = [];
+  state.modalPostType = 'offering';
+  state.modalSeverity = 'medium';
+  renderModal();
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(){
+  state.isModalOpen = false;
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+const SCAM_BADGE_OPTIONS = ['Unpaid Invoice', 'Fake Agency', 'Contract Breach', 'Ghosted'];
+
+function renderModal(){
+  const channel = state.activeChannel;
+  const meta = channelMeta(channel);
+  document.getElementById('modal-head-left').innerHTML = `<span class="channel-icon-wrap" style="width:28px;height:28px;background:${meta.accentSoft};color:${meta.accentText}">${svg(meta.icon,14)}</span><h2>New post in ${meta.handle}</h2>`;
+  document.getElementById('modal-head-left').style.display = 'flex';
+  document.getElementById('modal-head-left').style.alignItems = 'center';
+  document.getElementById('modal-head-left').style.gap = '8px';
+
+  let html = '';
+
+  if (channel === 'gig-sharing'){
+    html += `<div class="type-toggle">
+      <button type="button" class="type-btn${state.modalPostType === 'offering' ? ' active' : ''}" data-posttype="offering">Offering work</button>
+      <button type="button" class="type-btn${state.modalPostType === 'seeking' ? ' active' : ''}" data-posttype="seeking">Seeking help</button>
+    </div>`;
+  }
+
+  const titlePlaceholder = channel === 'peer-review' ? 'e.g. Landing page hero — v3'
+    : channel === 'gig-sharing' ? 'e.g. Need a React dev for 2 weeks'
+    : channel === 'scam-alert' ? 'e.g. Client name or agency on platform X'
+    : 'e.g. What I learned this week';
+
+  html += `<div class="field">
+    <label>${channel === 'personal-blog' ? 'Entry title' : 'Title'}</label>
+    <input type="text" id="field-title" placeholder="${titlePlaceholder}">
+  </div>`;
+
+  const bodyPlaceholder = channel === 'scam-alert'
+    ? 'Describe what happened — dates, platform, communication, anything others should watch for.'
+    : 'Add some detail…';
+
+  html += `<div class="field">
+    <label>${channel === 'personal-blog' ? "What's on your mind?" : 'Description'}</label>
+    <textarea id="field-body" rows="4" placeholder="${bodyPlaceholder}"></textarea>
+  </div>`;
+
+  if (channel === 'gig-sharing'){
+    html += `<div class="field-row">
+      <div class="field"><label>Budget</label><input type="text" id="field-budget" placeholder="$800 fixed"></div>
+      <div class="field"><label>Scope</label><input type="text" id="field-scope" placeholder="1 week"></div>
+    </div>
+    <div class="field"><label>Tech stack (comma separated)</label><input type="text" id="field-techstack" placeholder="React, Node.js, PostgreSQL"></div>`;
+  }
+
+  if (channel === 'personal-blog'){
+    html += `<div class="field"><label>Location (optional)</label><input type="text" id="field-location" placeholder="e.g. Bali, Indonesia"></div>`;
+  }
+
+  if (channel === 'scam-alert'){
+    html += `<div class="field-row">
+      <div class="field"><label>Platform</label><input type="text" id="field-platform" placeholder="Upwork, direct, etc."></div>
+      <div class="field"><label>Severity</label>
+        <select id="field-severity">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Warning badges</label>
+      <div class="badge-options">${SCAM_BADGE_OPTIONS.map((b) => `<button type="button" class="badge-opt" data-badge="${b}">${b}</button>`).join('')}</div>
+    </div>`;
+  }
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-submit').textContent = `Post to ${meta.handle}`;
+  document.getElementById('modal-submit').disabled = true;
+
+  document.getElementById('modal-body').querySelectorAll('.type-btn').forEach((btn) => {
+    btn.addEventListener('click', () => { state.modalPostType = btn.dataset.posttype; renderModal(); });
+  });
+  document.getElementById('modal-body').querySelectorAll('.badge-opt').forEach((btn) => {
+    if (state.modalBadges.includes(btn.dataset.badge)) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      const b = btn.dataset.badge;
+      state.modalBadges = state.modalBadges.includes(b) ? state.modalBadges.filter((x) => x !== b) : [...state.modalBadges, b];
+      btn.classList.toggle('active');
+    });
+  });
+  const bodyField = document.getElementById('field-body');
+  if (bodyField) bodyField.addEventListener('input', () => {
+    document.getElementById('modal-submit').disabled = !bodyField.value.trim();
+  });
+}
+
+function submitModal(){
+  const channel = state.activeChannel;
+  const title = (document.getElementById('field-title')?.value || '').trim();
+  const body = (document.getElementById('field-body')?.value || '').trim();
+  if (!body) return;
+
+  const base = { id: nextId(), author: 'You', avatarColor: AVATAR_COLORS.purple, timestamp: 'just now', comments: [] };
+  let post;
+
+  if (channel === 'peer-review'){
+    post = { ...base, channel, title: title || 'Untitled work', description: body, coverLabel: 'Attachment · New upload', tags: [] };
+  } else if (channel === 'gig-sharing'){
+    const budget = (document.getElementById('field-budget')?.value || '').trim();
+    const scope = (document.getElementById('field-scope')?.value || '').trim();
+    const techStack = (document.getElementById('field-techstack')?.value || '').split(',').map((t) => t.trim()).filter(Boolean);
+    post = { ...base, channel, title: title || 'New gig', description: body, budget: budget || 'Not specified', scope: scope || 'Not specified', techStack, postType: state.modalPostType };
+  } else if (channel === 'personal-blog'){
+    const location = (document.getElementById('field-location')?.value || '').trim();
+    post = { ...base, channel, title: title || 'Untitled entry', content: body, location: location || 'Location not shared' };
+  } else {
+    const platform = (document.getElementById('field-platform')?.value || '').trim();
+    const severity = document.getElementById('field-severity')?.value || 'medium';
+    post = { ...base, channel, title: title || 'Untitled report', description: body, badges: state.modalBadges, platform: platform || 'Not specified', severity };
+  }
+
+  posts = [post, ...posts];
+  closeModal();
+  renderSidebar();
+  renderFeed();
+}
+
+/* -------------------------------------------------------------------------
+ * Wire up + init
+ * ---------------------------------------------------------------------- */
+function renderAll(){
+  renderSidebar();
+  renderFeed();
+}
+
+document.getElementById('drawer-close').addEventListener('click', closeThread);
+document.getElementById('overlay').addEventListener('click', closeThread);
+document.getElementById('reply-input').addEventListener('input', updateReplyButton);
+document.getElementById('reply-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendReply(); }
+});
+document.getElementById('reply-send').addEventListener('click', sendReply);
+
+document.getElementById('create-post-btn').addEventListener('click', openModal);
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+document.getElementById('modal-submit').addEventListener('click', submitModal);
+
+/* Account / settings dropdown (placeholder — no backend wired up yet) */
+const accountBtn = document.getElementById('account-btn');
+const accountDropdown = document.getElementById('account-dropdown');
+accountBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const open = accountDropdown.classList.toggle('open');
+  accountBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+document.addEventListener('click', (e) => {
+  if (!accountDropdown.contains(e.target) && e.target !== accountBtn){
+    accountDropdown.classList.remove('open');
+    accountBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+
+renderAll();
+</script>
+
+</body>
+</html>
